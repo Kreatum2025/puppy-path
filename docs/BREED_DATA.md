@@ -1,102 +1,116 @@
-# Rasanpassad profil och rasdata (design / backlog)
+# Rasdata: källmodell, policy och pipeline (design / backlog)
 
-> Status: **vision, ej byggd.** Bygger additivt på befintlig arkitektur
-> (`Breed`/`breedId` finns redan i `src/types/puppy.ts`). Ingen kod ännu.
+> Status: **policy + datamodell, inget byggt.** Ingen import till Supabase än,
+> ingen DB-ändring, ingen scraping. `breeds.json` (dogapi.dog) ligger untracked
+> som källjämförelse-artefakt. Bygger additivt på slice 1 (`public.breeds`).
 
-## Idé
+## Mål och princip
 
-När en användare väljer ras ska kontot anpassas efter just den rasen. Exempel:
-"Atlas är en Rottweiler" → profilen visar en lugn, pedagogisk
-**rasbeskrivning** och rasens typiska **egenskaper och beteenden**, så att ägaren
-lär sig vad som är normalt för sin valp. På sikt ska även **veckoutvecklingen**
-nyanseras per ras (t.ex. storras vs dvärgras: tillväxttakt, aktivitetsbehov,
-mognad), utan att bryta den lugna tonen eller göra veterinära påståenden.
+Målet är **trovärdig, svensk, kurerad rasinformation** där källa och grad av
+granskning alltid är tydlig. Inte "flest raser snabbast".
 
-Mål: gör appen mer personlig och lärande från dag ett, inte en generisk hundguide.
+- **Supabase = vår egen sanningskälla.** Externa API:er är *källor*, aldrig
+  live-beroenden och aldrig auktoritativa ensamma.
+- **Vi äger och kurerar.** Vi återpublicerar inte någon annans innehåll rakt av.
+- **AI = redaktionell assistent**, aldrig faktakälla (se nedan).
+- **Hälsa kräver extra försiktighet:** källa + mänsklig granskning innan publicering.
 
-## Värdeprincip
+## Datamodell: tre nivåer + publicerad vy
 
-- Beskrivande, inte dömande. Vi beskriver rastypiska tendenser, vi varnar inte.
-- Inga veterinära eller medicinska påståenden (samma regel som veckoguiderna).
-- Rasinfo kompletterar den personliga resan, den ersätter den inte. Användarens
-  egen loggdata är fortfarande huvudpersonen.
-- Honest data: visa bara rasinfo vi faktiskt har. Saknas den för en ras
-  (t.ex. Blandras) → ärligt, varmt tomt-state, aldrig påhittat innehåll.
+```
+public.breed_source_data   -- rådata per extern källa
+   breed_id            text
+   source_name         text      -- 'dogapi.dog' | 'api_ninjas' | 'thedogapi' ...
+   source_breed_name   text
+   source_url          text
+   raw_json            jsonb      -- hela svaret, oförändrat
+   fetched_at          timestamptz
+   license_note        text       -- får datan lagras? villkor?
+   attribution_required boolean
+   match_confidence    numeric    -- hur säker rasmatchningen är
 
-## Datamodell (föreslagen utökning)
+public.breed_references    -- SKK/RAS/FCI/rasklubb/veterinär (ENDAST referens)
+   breed_id            text
+   ref_type            text       -- 'SKK' | 'RAS' | 'FCI' | 'rasklubb' | 'vet'
+   title               text
+   url                 text
+   note                text       -- manuell review-notering
+   -- INGEN kopierad brödtext, inga RAS-PDF:er, inga hälsoavsnitt i klartext
 
-Utöka `Breed` (eller lägg ett separat `BreedProfile`) additivt:
+public.breed_content_sv    -- vår egen svenska, granskade text
+   breed_id            text
+   field               text       -- 'description' | 'activity' | 'grooming' | 'health' ...
+   value_sv            text       -- vår egen text
+   source_refs         jsonb      -- vilka källor underbygger fältet
+   derived_from        text       -- t.ex. 'api_ninjas.energy=4/5' för härledda fält
+   review_status       text       -- 'draft' | 'approved'
+   reviewed_by         text
+   updated_at          timestamptz
 
-```ts
-interface BreedProfile {
-  id: BreedId;
-  name: string;
-  group?: string;            // t.ex. "Brukshund", "Sällskapshund"
-  sizeClass?: 'liten' | 'mellan' | 'stor';
-  shortDescription: string;  // 1-2 meningar, lugn ton
-  temperament: string[];     // t.ex. ["lugn", "vaksam", "lojal"]
-  activityNeed?: 'låg' | 'medel' | 'hög';
-  goodToKnow?: string[];     // rastypiska saker att förbereda sig på
-  sourceName?: string;       // varifrån informationen kommer (transparens)
-  sourceUrl?: string;
-}
+public.breeds              -- PUBLICERAD appvy (det appen visar)
+   -- visar bara fält med review_status = 'approved'
 ```
 
-Konsumeras via service-lagret som allt annat:
+**Spårbarhetsexempel:** API Ninjas säger `energy = 4`. Det sparas som rådata i
+`breed_source_data`. Vår tolkning "hög aktivitetsnivå" ligger i
+`breed_content_sv` med `derived_from = 'api_ninjas.energy=4/5'` och
+`review_status`. Vi sparar aldrig bara "hög" och glömmer varifrån den kom.
 
-```ts
-// src/services/breedService.ts
-export async function getBreedProfile(id: BreedId): Promise<BreedProfile | null>;
-```
+## Publiceringsgrind
 
-Mock nu, riktig källa/API senare. UI ändras inte vid bytet.
+- Appen visar **endast** `breed_content_sv`-fält med `review_status = 'approved'`.
+- **Hälsa/sjukdomsrisker har strängare grind:** kräver ifyllt `source_refs` +
+  mänsklig `approved`. Aldrig AI-only, aldrig fri generering.
 
-## Innehållsstruktur (inspirerad av SKK)
+## AI:s roll
 
-SKK har en tydlig och igenkännbar struktur per ras att ta inspiration ifrån:
+AI **får**: översätta engelska källfält till svenska utkast, sammanfatta, skapa
+valp-anpassade tips, normalisera namn, matcha raser mellan källor, flagga osäker
+data, föreslå struktur.
 
-- Kort rasbeskrivning / historik
-- Egenskaper och mentalitet (temperament)
-- Aktivitets- och sysselsättningsbehov
-- Storlek och allmänt om rasen
-- "Bra att veta" inför valptiden
+AI **får inte**: hitta på sjukdomsrisker eller fakta utan källa, ersätta
+veterinär/SKK/rasstandard, skriva medicinska råd, publicera automatiskt.
 
-Vi återanvänder strukturen men skriver **egen, kort, lugn copy** (ingen
-direktkopiering av text). Visa alltid källa transparent (`sourceName`/`sourceUrl`).
+Pipeline: `källa (raw) → AI svenskt utkast (draft) → mänsklig granskning →
+approved → publiceras i breeds`.
 
-## Var det syns i appen
+## SKK / RAS-policy (bindande)
 
-- **Min valp**: ett "Om rasen"-kort (beskrivning + 3-4 egenskaper + aktivitetsnivå).
-- **Resan**: liten rasnyans i veckokorten där det är relevant och säkert
-  (t.ex. storras: "växer snabbt, undvik hård motion tidigt" som lugn notis).
-- **Onboarding (rasval)**: en kort förhandsvisning av rasen direkt vid valet,
-  som en liten belöning ("Vad kul, en Rottweiler!").
+RAS = SKK:s rasspecifika avelsstrategi (mål + beskrivning av hälsa, funktion,
+mentalitet, genetisk variation, exteriör). Värdefullt som **underlag och
+kontroll**, inte som material att automatiskt återpublicera.
 
-## Möjliga datakällor (att utvärdera)
+- SKK/RAS får användas som **referens- och granskningskälla**, inte som
+  automatiskt scrapead rådatakälla.
+- **Ingen scraping av SKK. Ingen import av SKK-text.** Vi kopierar eller
+  masshämtar inte SKK-texter, RAS-PDF:er eller hälsoavsnitt till Supabase.
+- För SKK/RAS sparas **högst metadata, källa/länk och manuell review-notering**
+  (i `breed_references`).
+- Svenska rastexter och hälsoavsnitt är **egna texter**, skapade med AI-stöd men
+  granskade innan publicering.
+- Hälsodata kräver källspårning och `review_status` innan den visas i appen.
 
-- **SKK** (svenska kennelklubben): bäst struktur och svensk kontext. Oklart
-  öppet API; kan kräva manuell kuratering eller licens. Använd som
-  struktur-/kvalitetsreferens.
-- **The Dog API** (`thedogapi.com`, `api.thedogapi.com`): öppet API med
-  rasdata (temperament, vikt, höjd, livslängd, bild). Engelskt → kräver
-  översättning/kuratering till svensk ton. **Trolig kandidat för det API
-  användaren mindes.**
-- **Wikidata / Wikipedia**: brett men ostrukturerat; endast som komplement.
+## Källjämförelse (per 2026-06-24)
 
-Verifiera licens och täckning (svenska raser + Blandras) innan val. Börja
-sannolikt med en liten, handkurerad svensk mock för MVP-raserna, lägg API
-ovanpå senare.
+| Källa | Raser | Styrka | Saknar | Lagring/licens |
+|---|---|---|---|---|
+| dogapi.dog (kinduff) | 283 | namn, engelsk beskrivning, livslängd, vikt (kg), hypoallergen, grupp | bild, temperament, höjd, hälsa | öppen/fri; men verifierar ej facts |
+| API Ninjas | ~200 | bild, egenskapspoäng (energi/pälsvård/familj/träningsbarhet), vikt+höjd | beskrivningstext; imperial enheter | free-plan tillåter sannolikt EJ lagring; kontrollera |
+| TheDogAPI | 100+ | bilder, characteristics, ev. vet-granskade hälsotips (betald) | – | attribution krävs om appen monetiseras |
+| SKK / RAS / FCI | – | svensk auktoritet, hälsa, rasstandard | upphovsrättsskyddat | endast referens, ej scraping |
 
-## Fasning
+**Roller:**
+- **dogapi.dog** = primär rasKATALOG + grundbeskrivningar (raw source → kurera).
+- **API Ninjas / TheDogAPI** = komplement för egenskaper + bilder, **endast om
+  licensen tillåter lagring**.
+- **SKK / RAS / FCI** = referens och manuell kvalitetssäkring, aldrig rådatakälla.
 
-1. Lägg `BreedProfile`-typ + `breedService` med handkurerad mock för de 10
-   MVP-raserna (kort beskrivning + 3 egenskaper + aktivitetsnivå).
-2. "Om rasen"-kort på Min valp + förhandsvisning i rasvalet.
-3. Rasnyans i veckokort där det är säkert och relevant.
-4. Koppla extern källa/API, behåll svensk kuratering och källangivelse.
+## Status och nästa steg
 
-## Gränser
-
-- Ingen rasprofilering som låter dömande eller skrämmande.
-- Inga hälsopåståenden om enskilda raser.
-- Blandras och raser utan data → ärligt tomt-state, inte gissningar.
+- Slice 1 klar: `public.breeds` (10 seed-raser, public read-only). Se
+  `docs/SUPABASE_PLAN.md`.
+- ⚠ API Ninjas-enrichment kördes på 9 rader men bör **nollställas** pga (a)
+  lagringslicens-osäkerhet och (b) skräpvärden på multi-match-raser
+  (cocker/poodle). Vänta på licensbesked.
+- Ingen full import förrän datamodellen ovan finns och licenser är bekräftade.
+- Inga destruktiva eller bulk-operationer utan godkännande.
