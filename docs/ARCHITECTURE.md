@@ -72,6 +72,32 @@ renderar korrekt även om en animation förenklas (graceful fallback).
 /modal/share-card         delningskorts-preview (modal)
 ```
 
+## Konventioner — var lägger jag vad
+
+Följ det här mönstret för varje ny feature, så håller strukturen ihop:
+
+- **Ny skärm/route** → `app/...` (Expo Router). Skärmen hämtar data via en
+  service och håller bara vy-logik. Läs aldrig `src/data` direkt från en skärm.
+- **Återanvändbar UI-primitiv** (knapp, kort, text, ikon) → `src/components/`
+  och exportera via `src/components/index.ts`.
+- **Domän-/feature-komponent** (puppy, growth, journey, share-card …) →
+  `src/features/<domän>/`.
+- **Ny datakälla/läsning eller skrivning** → lägg en `async`-funktion i en
+  service under `src/services/`. Returnera typade `Promise`. Mock nu, Supabase
+  senare — samma signatur. Skärmar/komponenter anropar bara servicen.
+- **Ny datatyp** (motsvarar framtida DB-tabell) → `src/types/`. Håll domänen
+  ren; UI-specifik typning (t.ex. `IoniconName`) ligger i `src/types/icons.ts`.
+- **Mockdata / redaktionellt innehåll** → `src/data/`. Konsumeras bara av
+  services, aldrig direkt av UI.
+- **Ren logik utan IO** (datum, veckoberäkning, formattering) → `src/lib/`.
+- **Designvärden** (färg, spacing, radius, typografi) → `src/theme/`. Inga
+  hårdkodade hex/px i komponenter.
+- **Ikoner** → Ionicons via `IconCircle`/`Ionicons`. Inga emoji i UI. Ikonnamn
+  typas som `IoniconName`.
+
+Tumregel: om en skärm importerar från `src/data` är det en signal att en
+service saknas.
+
 ## Regler
 
 - Inga hårdkodade färger i komponenter — använd `src/theme`.

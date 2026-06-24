@@ -1,5 +1,5 @@
 import { StyleSheet, View } from 'react-native';
-import { AppText, IconCircle, type IoniconName } from '@/components';
+import { AppText, IconCircle } from '@/components';
 import type { NativeOffer } from '@/types';
 import { colors, radius, spacing } from '@/theme';
 
@@ -14,7 +14,7 @@ interface NativeOfferCardProps {
 export function NativeOfferCard({ offer }: NativeOfferCardProps) {
   return (
     <View style={styles.card}>
-      <IconCircle name={offer.icon as IoniconName} size={48} />
+      <IconCircle name={offer.icon} size={48} />
       <View style={styles.text}>
         <AppText variant="overline" color={colors.accent}>
           {offer.category.toUpperCase()}

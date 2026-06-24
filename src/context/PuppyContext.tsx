@@ -9,7 +9,7 @@ import React, {
 import type { BreedId, Challenge, GrowthLog, Milestone, Puppy } from '@/types';
 import { getCurrentPuppy } from '@/services/puppyService';
 import { getGrowthHistory } from '@/services/growthService';
-import { breedNameById } from '@/data/breeds';
+import { breedNameById } from '@/services/breedService';
 import { currentWeek } from '@/lib/week';
 import { toISODate } from '@/lib/dates';
 

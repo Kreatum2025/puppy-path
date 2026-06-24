@@ -1,14 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import {
-  AppHeader,
-  AppText,
-  IconCircle,
-  ScreenContainer,
-  Toast,
-  type IoniconName,
-} from '@/components';
+import { AppHeader, AppText, IconCircle, ScreenContainer, Toast } from '@/components';
 import { getGuideCategories } from '@/services/guideService';
 import type { GuideCategory } from '@/types';
 import { colors, radius, spacing } from '@/theme';
@@ -42,7 +35,7 @@ export default function GuideScreen() {
               style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
             >
               <View style={styles.cardTop}>
-                <IconCircle name={c.icon as IoniconName} size={44} />
+                <IconCircle name={c.icon} size={44} />
                 <View style={styles.soon}>
                   <AppText variant="overline" color={colors.textMuted}>
                     SNART

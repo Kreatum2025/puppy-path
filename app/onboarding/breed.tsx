@@ -1,12 +1,12 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { OnboardingScaffold } from '@/features/onboarding/OnboardingScaffold';
 import { AppText } from '@/components';
 import { usePuppy } from '@/context/PuppyContext';
-import { breeds } from '@/data/breeds';
-import type { BreedId } from '@/types';
+import { getBreeds } from '@/services/breedService';
+import type { Breed, BreedId } from '@/types';
 import { colors, radius, spacing, type as typePresets } from '@/theme';
 
 const TOTAL_STEPS = 5;
@@ -16,15 +16,20 @@ export default function BreedStep() {
   const { draft, updateDraft } = usePuppy();
   const [selected, setSelected] = useState<BreedId | null>(draft.breedId);
   const [query, setQuery] = useState('');
+  const [allBreeds, setAllBreeds] = useState<Breed[]>([]);
+
+  useEffect(() => {
+    getBreeds().then(setAllBreeds);
+  }, []);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return breeds;
+    if (!q) return allBreeds;
     // Always keep "Blandras" reachable as a catch-all.
-    return breeds.filter(
+    return allBreeds.filter(
       (b) => b.name.toLowerCase().includes(q) || b.id === 'mixed',
     );
-  }, [query]);
+  }, [query, allBreeds]);
 
   return (
     <OnboardingScaffold

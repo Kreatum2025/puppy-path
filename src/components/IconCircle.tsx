@@ -1,8 +1,9 @@
 import { StyleSheet, View, type ViewStyle } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import type { IoniconName } from '@/types/icons';
 import { colors, radius } from '@/theme';
 
-export type IoniconName = keyof typeof Ionicons.glyphMap;
+export type { IoniconName };
 
 interface IconCircleProps {
   name: IoniconName;

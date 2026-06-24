@@ -2,6 +2,7 @@
  * Journey, memory, guide and digest domain types.
  * Mirror future Supabase tables; consumed only through the service layer.
  */
+import type { IoniconName } from './icons';
 
 /** Future table: milestones */
 export interface Milestone {
@@ -76,7 +77,7 @@ export interface GuideCategory {
   id: string;
   title: string;
   description: string;
-  icon: string;
+  icon: IoniconName;
 }
 
 export type ShareCardThemeId = 'forest' | 'cream' | 'minimal';
@@ -105,5 +106,5 @@ export interface NativeOffer {
   description: string;
   /** Weeks where this lifecycle recommendation is relevant. */
   relevantWeeks: [number, number];
-  icon: string;
+  icon: IoniconName;
 }
