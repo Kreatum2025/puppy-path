@@ -1,0 +1,18 @@
+{
+  "enabledPlugins": {
+    "expo@claude-plugins-official": true
+  },
+  "hooks": {
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "npm run verify || (echo 'BLOCKED: verification failed. Fix lint, typecheck or guard errors before stopping.' >&2; exit 2)"
+          }
+        ]
+      }
+    ]
+  }
+}
