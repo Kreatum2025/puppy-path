@@ -10,7 +10,7 @@ import type { BreedId, Challenge, GrowthLog, Milestone, Puppy } from '@/types';
 import { getCurrentPuppy } from '@/services/puppyService';
 import { getGrowthHistory } from '@/services/growthService';
 import { breedNameById } from '@/services/breedService';
-import { currentWeek } from '@/lib/week';
+import { ageInWeeks, currentWeek, homeWeekIndex } from '@/lib/week';
 import { toISODate } from '@/lib/dates';
 
 /** Simple monotonic id generator for locally created records (prototype). */
@@ -45,6 +45,7 @@ export interface OnboardingDraft {
   name: string;
   breedId: BreedId | null;
   dateOfBirth: string | null;
+  homecomingDate: string | null;
   photoUri: string | null;
   weightKg: number | null;
   withersHeightCm: number | null;
@@ -54,6 +55,7 @@ const emptyDraft: OnboardingDraft = {
   name: '',
   breedId: null,
   dateOfBirth: null,
+  homecomingDate: null,
   photoUri: null,
   weightKg: null,
   withersHeightCm: null,
@@ -74,6 +76,10 @@ interface PuppyContextValue {
   /** All logged growth points (oldest → newest), for the growth chart. */
   growthHistory: GrowthLog[];
   week: number;
+  /** Biological age in weeks (knowledge/development). */
+  puppyAgeWeeks: number;
+  /** Weeks since homecoming, min 1 (emotional journey). */
+  homeWeekIndex: number;
 
   // Onboarding draft
   draft: OnboardingDraft;
@@ -141,6 +147,17 @@ export function PuppyProvider({ children }: { children: React.ReactNode }) {
     [puppy],
   );
 
+  // Biological age (knowledge) and homecoming index (emotional journey) - kept
+  // separate per the locked terminology. See docs/PRODUCT_MECHANICS.md.
+  const puppyAgeWeeks = useMemo(
+    () => (puppy ? ageInWeeks(puppy.dateOfBirth) : 0),
+    [puppy],
+  );
+  const homeWeek = useMemo(
+    () => (puppy ? homeWeekIndex(puppy.homecomingDate) : 1),
+    [puppy],
+  );
+
   /**
    * Latest known values, derived from the logged history. Weight and withers
    * height are tracked independently, so each falls back to its most recent
@@ -184,6 +201,7 @@ export function PuppyProvider({ children }: { children: React.ReactNode }) {
       breedId,
       breedName: breedNameById(breedId),
       dateOfBirth: dob,
+      homecomingDate: draft.homecomingDate ?? toISODate(new Date()),
       photoUri: draft.photoUri ?? null,
       createdAt: toISODate(new Date()),
     });
@@ -296,6 +314,8 @@ export function PuppyProvider({ children }: { children: React.ReactNode }) {
       latestGrowth,
       growthHistory,
       week,
+      puppyAgeWeeks,
+      homeWeekIndex: homeWeek,
       draft,
       updateDraft,
       commitOnboarding,
@@ -318,6 +338,8 @@ export function PuppyProvider({ children }: { children: React.ReactNode }) {
       latestGrowth,
       growthHistory,
       week,
+      puppyAgeWeeks,
+      homeWeek,
       draft,
       updateDraft,
       commitOnboarding,

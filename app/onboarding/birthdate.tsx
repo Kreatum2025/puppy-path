@@ -8,9 +8,9 @@ import { subDays, toISODate, formatSwedishDate } from '@/lib/dates';
 import { ageInWeeks } from '@/lib/week';
 import { colors, radius, spacing } from '@/theme';
 
-const TOTAL_STEPS = 5;
-// Covers the whole first year (week 8–52). Closely spaced early on, where most
-// puppies join their home, then wider steps for older puppies.
+const TOTAL_STEPS = 6;
+// Biologisk ålder i veckor. Närmare spridning tidigt (8-14 v) där de flesta
+// valpar kommer hem, sedan bredare steg.
 const WEEK_OPTIONS = [8, 9, 10, 11, 12, 13, 14, 16, 18, 20, 24, 30, 36, 44, 52];
 
 /**
@@ -38,7 +38,7 @@ export default function BirthdateStep() {
       onBack={() => router.back()}
       onNext={() => {
         updateDraft({ dateOfBirth: dob });
-        router.push('/onboarding/photo');
+        router.push('/onboarding/homecoming');
       }}
     >
       <View style={styles.grid}>

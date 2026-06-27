@@ -5,7 +5,7 @@ import { OnboardingScaffold } from '@/features/onboarding/OnboardingScaffold';
 import { usePuppy } from '@/context/PuppyContext';
 import { colors, radius, spacing, type as typePresets } from '@/theme';
 
-const TOTAL_STEPS = 5;
+const TOTAL_STEPS = 6;
 
 export default function PuppyNameStep() {
   const router = useRouter();

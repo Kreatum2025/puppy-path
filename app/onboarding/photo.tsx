@@ -8,7 +8,7 @@ import { AppText } from '@/components';
 import { usePuppy } from '@/context/PuppyContext';
 import { colors, spacing } from '@/theme';
 
-const TOTAL_STEPS = 5;
+const TOTAL_STEPS = 6;
 
 /**
  * Photo step — placeholder only. No image picker dependency yet; tapping marks
@@ -22,7 +22,7 @@ export default function PhotoStep() {
 
   return (
     <OnboardingScaffold
-      stepIndex={3}
+      stepIndex={4}
       totalSteps={TOTAL_STEPS}
       title="Lägg till en första bild"
       subtitle="En bild gör profilen personlig direkt. Du kan byta den när som helst."

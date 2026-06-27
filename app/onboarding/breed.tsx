@@ -9,7 +9,7 @@ import { getBreeds } from '@/services/breedService';
 import type { Breed, BreedId } from '@/types';
 import { colors, radius, spacing, type as typePresets } from '@/theme';
 
-const TOTAL_STEPS = 5;
+const TOTAL_STEPS = 6;
 
 export default function BreedStep() {
   const router = useRouter();

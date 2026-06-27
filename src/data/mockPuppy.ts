@@ -15,6 +15,7 @@ export const mockPuppy: Puppy = {
   breedId: 'golden-retriever',
   breedName: 'Golden Retriever',
   dateOfBirth,
+  homecomingDate: toISODate(subDays(new Date(), 7)), // came home ~1 week ago
   photoUri: null, // no bundled photo — UI renders a premium placeholder
   createdAt: dateOfBirth,
 };

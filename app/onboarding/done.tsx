@@ -19,8 +19,10 @@ import { colors, spacing } from '@/theme';
 export default function OnboardingDone() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { puppy } = usePuppy();
+  const { puppy, puppyAgeWeeks, homeWeekIndex } = usePuppy();
   const name = puppy?.name ?? 'Din valp';
+  const homeLabel =
+    homeWeekIndex === 1 ? 'Första veckan hemma' : `Vecka ${homeWeekIndex} hemma`;
 
   const badgeScale = useSharedValue(0.6);
   useEffect(() => {
@@ -50,9 +52,12 @@ export default function OnboardingDone() {
           <AppText variant="hero" align="center" style={styles.title}>
             {name}s resa är skapad
           </AppText>
+          <AppText variant="bodyStrong" color={colors.primary} align="center">
+            {homeLabel} · {name} är {puppyAgeWeeks} veckor
+          </AppText>
           <AppText variant="body" color={colors.textMuted} align="center">
-            Nu följer ni första året tillsammans, en vecka i taget. Vi börjar på
-            den vecka ni är i just nu.
+            Nu börjar er resa hemma tillsammans. Ni tar det lugnt, en vecka i
+            taget.
           </AppText>
         </Animated.View>
       </View>

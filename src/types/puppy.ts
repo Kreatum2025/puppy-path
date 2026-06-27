@@ -28,8 +28,10 @@ export interface Puppy {
   name: string;
   breedId: BreedId;
   breedName: string;
-  /** ISO date string (yyyy-mm-dd). */
+  /** Biological date of birth, ISO (yyyy-mm-dd). Drives puppy_age_weeks. */
   dateOfBirth: string;
+  /** ISO date the puppy came home. Drives home_week_index (emotional journey). */
+  homecomingDate?: string | null;
   /** Local URI / remote URL of the profile photo, or null if not set yet. */
   photoUri: string | null;
   createdAt: string;

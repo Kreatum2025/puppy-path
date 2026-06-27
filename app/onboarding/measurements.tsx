@@ -6,7 +6,7 @@ import { AppText } from '@/components';
 import { usePuppy } from '@/context/PuppyContext';
 import { colors, radius, spacing, type as typePresets } from '@/theme';
 
-const TOTAL_STEPS = 5;
+const TOTAL_STEPS = 6;
 
 /** Parse a Swedish-style number ("7,4" or "7.4") into a number or null. */
 function parseNumber(input: string): number | null {
@@ -35,7 +35,7 @@ export default function MeasurementsStep() {
 
   return (
     <OnboardingScaffold
-      stepIndex={4}
+      stepIndex={5}
       totalSteps={TOTAL_STEPS}
       title="Vikt och mankhöjd"
       subtitle="Helt valfritt. Du kan logga detta varje vecka senare."

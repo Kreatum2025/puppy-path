@@ -27,6 +27,21 @@ export function currentWeek(dateOfBirthISO: string, now: Date = new Date()): num
 }
 
 /**
+ * Weeks since the puppy came home - the emotional journey index. "First week
+ * home" = 1. Falls back to 1 when no homecoming date is known (older/local
+ * state). Drives the homecoming-based journey copy ("Första veckan hemma"),
+ * separate from biological age (puppy_age_weeks).
+ */
+export function homeWeekIndex(
+  homecomingISO: string | null | undefined,
+  now: Date = new Date(),
+): number {
+  if (!homecomingISO) return 1;
+  const days = Math.max(0, daysBetween(parseISODate(homecomingISO), now));
+  return Math.max(1, Math.floor(days / 7) + 1);
+}
+
+/**
  * Progress (0–1) through the first year, from week 8 to week 52.
  * Used by the animated progress bar on the Today screen.
  */
