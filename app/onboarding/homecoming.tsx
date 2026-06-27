@@ -34,7 +34,7 @@ export default function HomecomingStep() {
       stepIndex={3}
       totalSteps={TOTAL_STEPS}
       title="När kom valpen hem till dig?"
-      subtitle="Det är här er gemensamma resa börjar. Ungefärligt räcker."
+      subtitle="Det är här er resa tillsammans börjar. Vi använder datumet för att anpassa valpens resa vecka för vecka."
       onBack={() => router.back()}
       onNext={() => {
         updateDraft({ homecomingDate });

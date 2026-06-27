@@ -13,6 +13,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { AppButton, AppText, PathMark } from '@/components';
 import { usePuppy } from '@/context/PuppyContext';
+import { homeWeekLabel } from '@/lib/week';
 import { colors, spacing } from '@/theme';
 
 /** Reward screen — a calm, warm payoff after onboarding. */
@@ -21,8 +22,7 @@ export default function OnboardingDone() {
   const insets = useSafeAreaInsets();
   const { puppy, puppyAgeWeeks, homeWeekIndex } = usePuppy();
   const name = puppy?.name ?? 'Din valp';
-  const homeLabel =
-    homeWeekIndex === 1 ? 'Första veckan hemma' : `Vecka ${homeWeekIndex} hemma`;
+  const homeLabel = homeWeekLabel(homeWeekIndex);
 
   const badgeScale = useSharedValue(0.6);
   useEffect(() => {

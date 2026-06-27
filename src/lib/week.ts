@@ -42,8 +42,19 @@ export function homeWeekIndex(
 }
 
 /**
+ * Homecoming-based label for the UI. "Vecka 1" is never used standalone; the
+ * first weeks read as "Första/Andra/... veckan hemma", later weeks as
+ * "Vecka N hemma" (allowed because it is explicitly "hemma").
+ */
+export function homeWeekLabel(index: number): string {
+  const ordinals = ['', 'Första', 'Andra', 'Tredje', 'Fjärde'];
+  if (index >= 1 && index <= 4) return `${ordinals[index]} veckan hemma`;
+  return `Vecka ${index} hemma`;
+}
+
+/**
  * Progress (0–1) through the first year, from week 8 to week 52.
- * Used by the animated progress bar on the Today screen.
+ * Used by puppy development/progress UI where biological age is needed.
  */
 export function yearProgress(week: number): number {
   const clamped = clampWeek(week);
