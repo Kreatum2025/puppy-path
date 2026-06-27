@@ -17,11 +17,14 @@ import { spacing } from '@/theme';
  * Growth/log/progress/digest/partner cards stay in the codebase for later slices.
  */
 export default function TodayScreen() {
-  const { loading, puppy, puppyAgeWeeks, homeWeekIndex } = usePuppy();
+  const { loading, puppy, puppyAgeWeeks, homeWeekIndex, saveMemory } = usePuppy();
   const [toast, setToast] = useState<string | null>(null);
   const onSaveMemory = useCallback(
-    () => setToast('Snart kan du spara det här som ett minne i valpens resa.'),
-    [],
+    (text: string) => {
+      saveMemory(text, 'daily_goal');
+      setToast('Minnet är sparat i valpens resa.');
+    },
+    [saveMemory],
   );
 
   if (loading || !puppy) {

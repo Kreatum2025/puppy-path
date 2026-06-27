@@ -13,9 +13,10 @@ import { usePuppy } from '@/context/PuppyContext';
 import { GrowthChartCard } from '@/features/growth/GrowthChartCard';
 import { MilestoneCard } from '@/features/milestones/MilestoneCard';
 import { ChallengeCard } from '@/features/challenges/ChallengeCard';
+import { MemoryCard } from '@/features/memories/MemoryCard';
 import { ageInWeeks } from '@/lib/week';
 import { formatSwedishDate } from '@/lib/dates';
-import { colors, radius, spacing } from '@/theme';
+import { colors, spacing } from '@/theme';
 
 function formatWeight(kg: number | null | undefined): string {
   return kg != null ? `${String(kg).replace('.', ',')} kg` : 'Ej angett';
@@ -25,7 +26,8 @@ function formatHeight(cm: number | null | undefined): string {
 }
 
 export default function PuppyProfileScreen() {
-  const { puppy, latestGrowth, growthHistory, milestones, challenges } = usePuppy();
+  const { puppy, latestGrowth, growthHistory, milestones, challenges, memories } =
+    usePuppy();
 
   if (!puppy) {
     return (
@@ -122,20 +124,23 @@ export default function PuppyProfileScreen() {
         </AppCard>
       </View>
 
-      {/* Photo memories preview (honest empty state) */}
+      {/* Memory book - the puppy's first chapter */}
       <View>
-        <SectionTitle title="Minnen" />
-        <View style={styles.memoryRow}>
-          {[0, 1, 2].map((i) => (
-            <View key={i} style={styles.memorySlot}>
-              <Ionicons name="image-outline" size={22} color={colors.sage} />
-            </View>
-          ))}
-        </View>
-        <AppText variant="caption" color={colors.textMuted} style={styles.memoryHint}>
-          Dina veckobilder samlas här. Lägg till veckans bild på Idag-fliken så
-          växer minnesboken fram.
-        </AppText>
+        <SectionTitle title="Första kapitlet" />
+        <AppCard padding="md">
+          {memories.length > 0 ? (
+            memories.map((m, i) => (
+              <View key={m.id} style={i > 0 ? styles.divider : undefined}>
+                <MemoryCard memory={m} puppyName={puppy.name} />
+              </View>
+            ))
+          ) : (
+            <EmptyRow
+              icon="bookmark-outline"
+              text="Här växer valpens första kapitel fram. Spara ditt första minne från Idag-fliken."
+            />
+          )}
+        </AppCard>
       </View>
     </ScreenContainer>
   );
@@ -166,17 +171,4 @@ const styles = StyleSheet.create({
   },
   empty: { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.sm },
   emptyText: { flexShrink: 1 },
-  memoryRow: { flexDirection: 'row', gap: spacing.md },
-  memorySlot: {
-    flex: 1,
-    aspectRatio: 1,
-    borderRadius: radius.lg,
-    backgroundColor: colors.card,
-    borderWidth: StyleSheet.hairlineWidth * 2,
-    borderColor: colors.border,
-    borderStyle: 'dashed',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  memoryHint: { marginTop: spacing.md },
 });

@@ -6,11 +6,11 @@ import React, {
   useMemo,
   useState,
 } from 'react';
-import type { BreedId, Challenge, GrowthLog, Milestone, Puppy } from '@/types';
+import type { BreedId, Challenge, GrowthLog, Memory, Milestone, Puppy } from '@/types';
 import { getCurrentPuppy } from '@/services/puppyService';
 import { getGrowthHistory } from '@/services/growthService';
 import { breedNameById } from '@/services/breedService';
-import { ageInWeeks, currentWeek, homeWeekIndex } from '@/lib/week';
+import { ageInWeeks, currentWeek, homeWeekIndex, homeWeekLabel } from '@/lib/week';
 import { toISODate } from '@/lib/dates';
 
 /** Simple monotonic id generator for locally created records (prototype). */
@@ -98,12 +98,16 @@ interface PuppyContextValue {
   milestones: Milestone[];
   challenges: Challenge[];
 
+  // Saved memories - the puppy's memory book ("Första kapitlet")
+  memories: Memory[];
+
   // Mock log actions (update local state, no backend)
   logWeight: (weightKg: number) => void;
   logHeight: (withersHeightCm: number) => void;
   savePhoto: (uri?: string | null) => void;
   selectMilestone: (title: string) => void;
   selectChallenge: (title: string) => void;
+  saveMemory: (text: string, linkedTo?: Memory['linkedTo']) => void;
 }
 
 const PuppyContext = createContext<PuppyContextValue | undefined>(undefined);
@@ -123,6 +127,7 @@ export function PuppyProvider({ children }: { children: React.ReactNode }) {
   );
   const [milestones, setMilestones] = useState<Milestone[]>([]);
   const [challenges, setChallenges] = useState<Challenge[]>([]);
+  const [memories, setMemories] = useState<Memory[]>([]);
 
   // Seed from the service layer (mock now, Supabase later).
   useEffect(() => {
@@ -222,6 +227,7 @@ export function PuppyProvider({ children }: { children: React.ReactNode }) {
     setGrowthHistory(seedGrowth);
     setMilestones([]);
     setChallenges([]);
+    setMemories([]);
     setSelectedMilestone(null);
     setSelectedChallenge(null);
     setWeeklyProgress(emptyProgress);
@@ -302,6 +308,27 @@ export function PuppyProvider({ children }: { children: React.ReactNode }) {
     [puppy, week],
   );
 
+  const saveMemory = useCallback(
+    (text: string, linkedTo: Memory['linkedTo'] = 'daily_goal') => {
+      const trimmed = text.trim();
+      if (!trimmed) return;
+      setMemories((prev) => [
+        {
+          id: nextLocalId('mem'),
+          puppyId: puppy?.id ?? 'puppy-local',
+          text: trimmed,
+          linkedTo,
+          homeWeekLabel: homeWeekLabel(homeWeek),
+          puppyAgeWeeks,
+          photoUri: null,
+          createdAt: toISODate(new Date()),
+        },
+        ...prev,
+      ]);
+    },
+    [puppy, homeWeek, puppyAgeWeeks],
+  );
+
   const completedCount = useMemo(
     () => Object.values(weeklyProgress).filter(Boolean).length,
     [weeklyProgress],
@@ -331,6 +358,8 @@ export function PuppyProvider({ children }: { children: React.ReactNode }) {
       savePhoto,
       selectMilestone,
       selectChallenge,
+      memories,
+      saveMemory,
     }),
     [
       loading,
@@ -355,6 +384,8 @@ export function PuppyProvider({ children }: { children: React.ReactNode }) {
       savePhoto,
       selectMilestone,
       selectChallenge,
+      memories,
+      saveMemory,
     ],
   );
 

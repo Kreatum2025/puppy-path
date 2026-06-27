@@ -42,6 +42,25 @@ export interface MemoryPhoto {
   caption?: string;
 }
 
+/**
+ * A saved moment in the puppy's journey (the memory book). In-memory for the
+ * demo. Fields are presented to the user as context ("Första veckan hemma",
+ * "Luna är 10 veckor", "Sparat idag"), never as raw database fields.
+ */
+export interface Memory {
+  id: string;
+  puppyId: string;
+  text: string;
+  /** What the memory was saved from. */
+  linkedTo: 'daily_goal' | 'milestone' | 'manual';
+  homeWeekLabel: string;
+  puppyAgeWeeks: number;
+  /** Optional photo (local URI now; Supabase Storage later). */
+  photoUri?: string | null;
+  /** Local ISO date (yyyy-mm-dd). */
+  createdAt: string;
+}
+
 /** Editorial content; future table: weekly_guides (or static content) */
 export interface WeeklyGuide {
   weekNumber: number;
