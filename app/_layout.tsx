@@ -64,6 +64,10 @@ export default function RootLayout() {
               name="modal/share-card"
               options={{ presentation: 'modal' }}
             />
+            <Stack.Screen
+              name="modal/memory-card"
+              options={{ presentation: 'modal' }}
+            />
           </Stack>
         </PuppyProvider>
       </SafeAreaProvider>

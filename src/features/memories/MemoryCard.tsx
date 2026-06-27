@@ -1,5 +1,5 @@
 import { StyleSheet, View } from 'react-native';
-import { AppText } from '@/components';
+import { AppButton, AppText } from '@/components';
 import type { Memory } from '@/types';
 import { toISODate, formatSwedishDate } from '@/lib/dates';
 import { colors, spacing } from '@/theme';
@@ -7,6 +7,8 @@ import { colors, spacing } from '@/theme';
 interface MemoryCardProps {
   memory: Memory;
   puppyName: string;
+  /** Opens the memory as a shareable memory card (preview). */
+  onShowCard?: () => void;
 }
 
 /**
@@ -14,7 +16,7 @@ interface MemoryCardProps {
  * row). Metadata reads as context: "Första veckan hemma · Luna är 10 veckor ·
  * Sparat idag".
  */
-export function MemoryCard({ memory, puppyName }: MemoryCardProps) {
+export function MemoryCard({ memory, puppyName, onShowCard }: MemoryCardProps) {
   const today = toISODate(new Date());
   const when =
     memory.createdAt === today
@@ -27,10 +29,23 @@ export function MemoryCard({ memory, puppyName }: MemoryCardProps) {
       <AppText variant="caption" color={colors.textMuted}>
         {`${memory.homeWeekLabel} · ${puppyName} är ${memory.puppyAgeWeeks} veckor · ${when}`}
       </AppText>
+
+      {onShowCard ? (
+        <View style={styles.action}>
+          <AppButton
+            label="Visa som minneskort"
+            variant="ghost"
+            size="md"
+            fullWidth={false}
+            onPress={onShowCard}
+          />
+        </View>
+      ) : null}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   root: { gap: spacing.xs },
+  action: { marginTop: spacing.xs, alignItems: 'flex-start' },
 });

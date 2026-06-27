@@ -1,5 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import {
   AppCard,
   AppText,
@@ -28,6 +29,7 @@ function formatHeight(cm: number | null | undefined): string {
 export default function PuppyProfileScreen() {
   const { puppy, latestGrowth, growthHistory, milestones, challenges, memories } =
     usePuppy();
+  const router = useRouter();
 
   if (!puppy) {
     return (
@@ -131,7 +133,13 @@ export default function PuppyProfileScreen() {
           {memories.length > 0 ? (
             memories.map((m, i) => (
               <View key={m.id} style={i > 0 ? styles.divider : undefined}>
-                <MemoryCard memory={m} puppyName={puppy.name} />
+                <MemoryCard
+                  memory={m}
+                  puppyName={puppy.name}
+                  onShowCard={() =>
+                    router.push(`/modal/memory-card?memoryId=${m.id}`)
+                  }
+                />
               </View>
             ))
           ) : (
