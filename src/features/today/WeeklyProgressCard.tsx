@@ -42,7 +42,7 @@ export function WeeklyProgressCard({
             VECKANS RESA
           </AppText>
           <AppText variant="heading">
-            {puppyName}s vecka {week}
+            Vecka {week} med {puppyName}
           </AppText>
         </View>
         <View style={styles.count}>

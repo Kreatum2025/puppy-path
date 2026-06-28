@@ -85,7 +85,7 @@ interface PuppyContextValue {
   draft: OnboardingDraft;
   updateDraft: (patch: Partial<OnboardingDraft>) => void;
   /** Finalise onboarding into the active puppy (prototype: local only). */
-  commitOnboarding: () => void;
+  commitOnboarding: (overrides?: Partial<OnboardingDraft>) => void;
   resetDraft: () => void;
 
   // Weekly gamified progress
@@ -192,35 +192,39 @@ export function PuppyProvider({ children }: { children: React.ReactNode }) {
 
   const resetDraft = useCallback(() => setDraft(emptyDraft), []);
 
-  const commitOnboarding = useCallback(() => {
+  const commitOnboarding = useCallback(
+    (overrides?: Partial<OnboardingDraft>) => {
+    // Merge any values set in the SAME handler as commit (e.g. the measurements
+    // step) so they are not lost to React's async setState batching.
+    const d = { ...draft, ...overrides };
     const puppyId = 'puppy-local';
-    const dob = draft.dateOfBirth ?? toISODate(new Date());
-    const breedId = draft.breedId ?? 'mixed';
+    const dob = d.dateOfBirth ?? toISODate(new Date());
+    const breedId = d.breedId ?? 'mixed';
 
     // A freshly created puppy starts with a clean slate — no inherited demo
     // data. Milestones, challenges, growth and weekly progress all reset, so the
     // profile honestly reflects what the owner has actually logged.
     setPuppy({
       id: puppyId,
-      name: draft.name.trim() || 'Min valp',
+      name: d.name.trim() || 'Min valp',
       breedId,
       breedName: breedNameById(breedId),
       dateOfBirth: dob,
-      homecomingDate: draft.homecomingDate ?? toISODate(new Date()),
-      photoUri: draft.photoUri ?? null,
+      homecomingDate: d.homecomingDate ?? toISODate(new Date()),
+      photoUri: d.photoUri ?? null,
       createdAt: toISODate(new Date()),
     });
     // Seed the growth history only with what the owner actually entered during
     // onboarding (one point, or none). The chart fills in honestly from there.
     const seedGrowth: GrowthLog[] =
-      draft.weightKg != null || draft.withersHeightCm != null
+      d.weightKg != null || d.withersHeightCm != null
         ? [
             {
               id: nextLocalId('growth'),
               puppyId,
               measuredAt: toISODate(new Date()),
-              weightKg: draft.weightKg ?? null,
-              withersHeightCm: draft.withersHeightCm ?? null,
+              weightKg: d.weightKg ?? null,
+              withersHeightCm: d.withersHeightCm ?? null,
             },
           ]
         : [];

@@ -25,11 +25,14 @@ export default function MeasurementsStep() {
   );
 
   const finish = () => {
-    updateDraft({
+    const measurements = {
       weightKg: parseNumber(weight),
       withersHeightCm: parseNumber(height),
-    });
-    commitOnboarding();
+    };
+    // Pass the values straight to commit so they are not lost to setState
+    // batching (updateDraft alone would not be visible to commitOnboarding yet).
+    updateDraft(measurements);
+    commitOnboarding(measurements);
     router.replace('/onboarding/done');
   };
 

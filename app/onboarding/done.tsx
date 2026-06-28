@@ -50,7 +50,7 @@ export default function OnboardingDone() {
 
         <Animated.View entering={FadeInDown.delay(250).duration(600)} style={styles.text}>
           <AppText variant="hero" align="center" style={styles.title}>
-            {name}s resa är skapad
+            Resan med {name} börjar
           </AppText>
           <AppText variant="bodyStrong" color={colors.primary} align="center">
             {homeLabel} · {name} är {puppyAgeWeeks} veckor
@@ -64,7 +64,7 @@ export default function OnboardingDone() {
 
       <Animated.View entering={FadeIn.delay(500).duration(500)}>
         <AppButton
-          label={`Till ${name}s resa`}
+          label={`Till resan med ${name}`}
           onPress={() => router.replace('/(tabs)/today')}
         />
       </Animated.View>
