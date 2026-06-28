@@ -16,11 +16,13 @@ export function SectionTitle({ title, trailing, overline }: SectionTitleProps) {
     <View style={styles.wrap}>
       <View style={styles.left}>
         {overline ? (
-          <AppText variant="overline" color={colors.accent} style={styles.overline}>
+          <AppText variant="overline" color={colors.sage} style={styles.overline}>
             {overline.toUpperCase()}
           </AppText>
         ) : null}
-        <AppText variant="heading">{title}</AppText>
+        <AppText variant="heading" color={colors.primaryDeep}>
+          {title}
+        </AppText>
       </View>
       {trailing ? <View>{trailing}</View> : null}
     </View>

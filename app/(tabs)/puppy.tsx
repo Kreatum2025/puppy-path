@@ -15,19 +15,19 @@ import { GrowthChartCard } from '@/features/growth/GrowthChartCard';
 import { MilestoneCard } from '@/features/milestones/MilestoneCard';
 import { ChallengeCard } from '@/features/challenges/ChallengeCard';
 import { MemoryCard } from '@/features/memories/MemoryCard';
-import { ageInWeeks } from '@/lib/week';
+import { ageInWeeks, homeWeekLabel } from '@/lib/week';
 import { formatSwedishDate } from '@/lib/dates';
 import { colors, spacing } from '@/theme';
 
 function formatWeight(kg: number | null | undefined): string {
-  return kg != null ? `${String(kg).replace('.', ',')} kg` : 'Ej angett';
+  return kg != null ? `${String(kg).replace('.', ',')} kg` : 'Inte sparat ännu';
 }
 function formatHeight(cm: number | null | undefined): string {
-  return cm != null ? `${cm} cm` : 'Ej angett';
+  return cm != null ? `${cm} cm` : 'Inte sparat ännu';
 }
 
 export default function PuppyProfileScreen() {
-  const { puppy, latestGrowth, growthHistory, milestones, challenges, memories } =
+  const { puppy, latestGrowth, growthHistory, milestones, challenges, memories, homeWeekIndex } =
     usePuppy();
   const router = useRouter();
 
@@ -42,19 +42,28 @@ export default function PuppyProfileScreen() {
   }
 
   const weeks = ageInWeeks(puppy.dateOfBirth);
+  const homeLabel = homeWeekLabel(homeWeekIndex);
 
   return (
     <ScreenContainer contentContainerStyle={{ gap: spacing.lg }}>
-      {/* Identity */}
-      <View style={styles.identity}>
-        <PuppyAvatar uri={puppy.photoUri} size={120} />
-        <AppText variant="title" style={styles.name}>
-          {puppy.name}
-        </AppText>
-        <AppText variant="body" color={colors.textMuted}>
-          {puppy.breedName} · {weeks} veckor
-        </AppText>
-      </View>
+      {/* Profile hero */}
+      <AppCard variant="secondary" padding="lg">
+        <View style={styles.identity}>
+          <PuppyAvatar uri={puppy.photoUri} size={104} />
+          <AppText variant="overline" color={colors.moss}>
+            {homeLabel}
+          </AppText>
+          <AppText variant="title" style={styles.name}>
+            {puppy.name}
+          </AppText>
+          <AppText variant="body" color={colors.textMuted}>
+            {puppy.breedName} · {weeks} veckor
+          </AppText>
+          <AppText variant="caption" color={colors.textMuted} style={styles.hint}>
+            Valpens resa växer fram här.
+          </AppText>
+        </View>
+      </AppCard>
 
       {/* Facts */}
       <AppCard padding="md">
@@ -101,7 +110,7 @@ export default function PuppyProfileScreen() {
           ) : (
             <EmptyRow
               icon="ribbon-outline"
-              text="Inga milstolpar än. Logga din första på Idag-fliken."
+              text="Lägg till din första milstolpe från Idag."
             />
           )}
         </AppCard>
@@ -120,7 +129,7 @@ export default function PuppyProfileScreen() {
           ) : (
             <EmptyRow
               icon="paw-outline"
-              text="Inga utmaningar loggade än. Det dyker upp här när du loggar veckans utmaning."
+              text="Inga utmaningar sparade än. De dyker upp här när du sparar veckans utmaning."
             />
           )}
         </AppCard>
@@ -129,7 +138,7 @@ export default function PuppyProfileScreen() {
       {/* Memory book - the puppy's first chapter */}
       <View>
         <SectionTitle title="Första kapitlet" />
-        <AppCard padding="md">
+        <AppCard padding="md" background={colors.surfaceSage}>
           {memories.length > 0 ? (
             memories.map((m, i) => (
               <View key={m.id} style={i > 0 ? styles.divider : undefined}>
@@ -143,10 +152,14 @@ export default function PuppyProfileScreen() {
               </View>
             ))
           ) : (
-            <EmptyRow
-              icon="bookmark-outline"
-              text="Här växer valpens första kapitel fram. Spara ditt första minne från Idag-fliken."
-            />
+            <View style={styles.chapterEmpty}>
+              <AppText variant="bodyStrong" color={colors.text}>
+                Första kapitlet väntar
+              </AppText>
+              <AppText variant="body" color={colors.textMuted}>
+                Spara ett litet minne från Idag så börjar minnesboken växa fram.
+              </AppText>
+            </View>
           )}
         </AppCard>
       </View>
@@ -166,8 +179,10 @@ function EmptyRow({ icon, text }: { icon: IoniconName; text: string }) {
 }
 
 const styles = StyleSheet.create({
-  identity: { alignItems: 'center', gap: spacing.sm, paddingTop: spacing.sm },
-  name: { marginTop: spacing.sm },
+  identity: { alignItems: 'center', gap: spacing.xs },
+  name: { marginTop: spacing.xs },
+  hint: { marginTop: spacing.xs },
+  chapterEmpty: { gap: spacing.xs },
   factsRow: { flexDirection: 'row', gap: spacing.md },
   factsRowGap: { marginTop: spacing.md },
   fact: { flex: 1 },

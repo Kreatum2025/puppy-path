@@ -31,11 +31,14 @@ export function DailyGoalCard({
   const [done, setDone] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [text, setText] = useState('Vi klarade dagens lilla mål tillsammans.');
+  const [text, setText] = useState('Vi tog en lugn stund tillsammans idag.');
 
   return (
     <Animated.View entering={FadeInDown.delay(delay).duration(450)}>
-      <AppCard padding="md">
+      <AppCard variant="primary" padding="md">
+        <AppText variant="overline" color={colors.moss} style={styles.overline}>
+          DAGENS LILLA MÅL
+        </AppText>
         <AppText variant="bodyStrong" style={styles.title}>
           {title}
         </AppText>
@@ -58,20 +61,18 @@ export function DailyGoalCard({
             <View style={styles.row}>
               <Ionicons name="heart" size={20} color={colors.primary} />
               <AppText variant="bodyStrong" color={colors.primary}>
-                {saved
-                  ? 'Minnet är sparat i valpens resa'
-                  : 'Ni klarade dagens mål tillsammans'}
+                {saved ? 'Sparat i första kapitlet' : 'Fint steg tillsammans'}
               </AppText>
             </View>
 
             {saved ? (
               <AppText variant="body" color={colors.textMuted}>
-                {`Du hittar det i resan med ${puppyName}, under Min valp.`}
+                Du hittar det under Första kapitlet på Min valp.
               </AppText>
             ) : !saving ? (
               <>
                 <AppText variant="body" color={colors.textMuted}>
-                  {`${puppyName} tog ett litet steg idag. Vill du spara det här som ett minne i resan med ${puppyName}?`}
+                  {`${puppyName} tog ett litet steg idag. Vill du spara den här stunden i första kapitlet med ${puppyName}?`}
                 </AppText>
                 <View style={styles.action}>
                   <AppButton
@@ -95,7 +96,7 @@ export function DailyGoalCard({
                 />
                 <View style={styles.saveRow}>
                   <AppButton
-                    label="Spara minne"
+                    label="Spara i första kapitlet"
                     size="md"
                     fullWidth={false}
                     onPress={() => {
@@ -122,6 +123,7 @@ export function DailyGoalCard({
 }
 
 const styles = StyleSheet.create({
+  overline: { marginBottom: spacing.xs },
   title: { marginBottom: spacing.sm },
   action: { marginTop: spacing.lg },
   doneBox: { marginTop: spacing.lg, gap: spacing.sm },

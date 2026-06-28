@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { StyleSheet, TextInput, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { OnboardingScaffold } from '@/features/onboarding/OnboardingScaffold';
-import { AppText } from '@/components';
+import { AppCard, AppText } from '@/components';
 import { usePuppy } from '@/context/PuppyContext';
 import { colors, radius, spacing, type as typePresets } from '@/theme';
 
@@ -41,7 +41,7 @@ export default function MeasurementsStep() {
       stepIndex={5}
       totalSteps={TOTAL_STEPS}
       title="Vikt och mankhöjd"
-      subtitle="Helt valfritt. Du kan logga detta varje vecka senare."
+      subtitle="Helt valfritt. Om du sparar första måttet kan du följa hur valpen växer över tid."
       nextLabel="Skapa profil"
       onBack={() => router.back()}
       onNext={finish}
@@ -86,12 +86,20 @@ export default function MeasurementsStep() {
           </View>
         </View>
       </View>
+
+      <AppCard variant="secondary" padding="md" style={styles.note}>
+        <AppText variant="body" color={colors.text}>
+          Valpar växer olika. Måtten är till för att följa utvecklingen, inte för
+          att bedöma om något är rätt eller fel.
+        </AppText>
+      </AppCard>
     </OnboardingScaffold>
   );
 }
 
 const styles = StyleSheet.create({
   fields: { gap: spacing.xl },
+  note: { marginTop: spacing.xl },
   field: { gap: spacing.sm },
   inputRow: {
     flexDirection: 'row',

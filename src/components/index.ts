@@ -7,6 +7,7 @@ export { StatPill } from './StatPill';
 export { ProgressBar } from './ProgressBar';
 export { AppHeader } from './AppHeader';
 export { PathMark } from './PathMark';
+export { StoryImageSlot } from './StoryImageSlot';
 export { PuppyAvatar } from './PuppyAvatar';
 export { Toast } from './Toast';
 export { IconCircle, type IoniconName } from './IconCircle';

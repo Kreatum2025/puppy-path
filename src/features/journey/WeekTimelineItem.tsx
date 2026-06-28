@@ -45,8 +45,8 @@ export function WeekTimelineItem({ guide, isCurrent, isLast }: WeekTimelineItemP
       {/* Content */}
       <View style={styles.content}>
         {isCurrent ? (
-          <AppText variant="overline" color={colors.accent} style={styles.badge}>
-            NUVARANDE VECKA
+          <AppText variant="overline" color={colors.primary} style={styles.badge}>
+            DIN VECKA
           </AppText>
         ) : null}
 
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
   },
   nodeActive: { backgroundColor: colors.primary },
   nodeLocked: { backgroundColor: colors.card, borderWidth: StyleSheet.hairlineWidth * 2, borderColor: colors.border },
-  nodeCurrent: { borderWidth: 3, borderColor: colors.accent },
+  nodeCurrent: { borderWidth: 3, borderColor: colors.primary },
   line: { width: 2, flex: 1, backgroundColor: colors.border, marginVertical: spacing.xs, minHeight: spacing.lg },
   content: { flex: 1, paddingBottom: spacing.lg },
   badge: { marginBottom: spacing.xs },

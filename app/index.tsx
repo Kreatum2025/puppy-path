@@ -1,141 +1,126 @@
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
-import { AppButton, AppText, IconCircle, PathMark, type IoniconName } from '@/components';
-import { colors, radius, spacing } from '@/theme';
+import {
+  AppButton,
+  AppCard,
+  AppText,
+  IconCircle,
+  PathMark,
+  ScreenContainer,
+  StoryImageSlot,
+  type IoniconName,
+} from '@/components';
+import { colors, spacing } from '@/theme';
 
 const STEPS: { icon: IoniconName; title: string; body: string }[] = [
   {
     icon: 'paw-outline',
-    title: 'Skapa profil',
-    body: 'Namn, ras, ålder och en första bild. Klart på en minut.',
+    title: 'Skapa valpens profil',
+    body: 'Namn, ålder, hemkomst och ras. Bara det som behövs för att börja.',
   },
   {
     icon: 'calendar-outline',
     title: 'Följ veckan',
-    body: 'Se nuvarande vecka och logga vikt, bilder, milstolpar och utmaningar.',
+    body: 'Veckans tema, dagens lilla mål och lugna råd i rätt tid.',
   },
   {
-    icon: 'share-outline',
-    title: 'Skapa veckokort',
-    body: 'Samla veckan i ett fint kort att spara och dela.',
+    icon: 'bookmark-outline',
+    title: 'Bygg första kapitlet',
+    body: 'Spara bilder, små steg och minnen från resan tillsammans.',
   },
 ];
 
 /**
- * Welcome screen. Introduces PuppyJourney emotionally, then shows a compact
- * "så funkar det" so a new visitor understands the product before the CTA.
+ * Welcome screen. A warm, premium intro that sells the journey (the first year
+ * goes fast - here you build the first chapter), not a feature table.
  */
 export default function WelcomeScreen() {
   const router = useRouter();
-  const insets = useSafeAreaInsets();
 
   return (
-    <ScrollView
-      style={styles.root}
-      contentContainerStyle={{ paddingBottom: insets.bottom + spacing.xl }}
-      showsVerticalScrollIndicator={false}
-    >
-      {/* Forest hero */}
-      <View style={[styles.hero, { paddingTop: insets.top + spacing.xxl }]}>
-        <Animated.View entering={FadeIn.duration(600)} style={styles.brandRow}>
-          <PathMark size={36} />
-          <AppText variant="overline" color={colors.sage} style={styles.brand}>
-            PUPPYJOURNEY
-          </AppText>
-        </Animated.View>
+    <ScreenContainer maxContentWidth={560} contentContainerStyle={{ gap: spacing.xl }}>
+      {/* Brand row */}
+      <Animated.View entering={FadeIn.duration(500)} style={styles.brandRow}>
+        <PathMark size={22} />
+        <AppText variant="overline" color={colors.moss}>
+          PUPPYJOURNEY
+        </AppText>
+      </Animated.View>
 
-        <Animated.View entering={FadeInDown.delay(120).duration(700)} style={styles.heroArt}>
-          <View style={styles.heroCircle}>
-            <PathMark size={110} color={colors.card} accent={colors.accent} />
-          </View>
-        </Animated.View>
+      {/* Hero story card */}
+      <Animated.View entering={FadeInDown.delay(80).duration(600)}>
+        <AppCard variant="primary" padding="lg">
+          <AppText variant="overline" color={colors.moss}>
+            VALPENS FÖRSTA ÅR
+          </AppText>
+          <AppText variant="hero" style={styles.heroTitle}>
+            Följ din valps första kapitel
+          </AppText>
+          <AppText variant="body" color={colors.textMuted} style={styles.heroBody}>
+            Små steg, trygg vägledning och minnen från första tiden tillsammans.
+          </AppText>
+          <StoryImageSlot aspectRatio={16 / 10} tone="sage" style={styles.heroImage} />
+        </AppCard>
+      </Animated.View>
 
-        <Animated.View entering={FadeInDown.delay(220).duration(700)} style={styles.heroText}>
-          <AppText variant="hero" color={colors.white} style={styles.title}>
-            Följ din valps första år
-          </AppText>
-          <AppText variant="body" color={colors.sage}>
-            Vecka för vecka, minne för minne.
-          </AppText>
-        </Animated.View>
-      </View>
+      {/* Value statement */}
+      <Animated.View entering={FadeInDown.delay(180).duration(600)}>
+        <AppText variant="body" color={colors.text} style={styles.value}>
+          Den första tiden går fort. PuppyJourney hjälper dig följa veckan, förstå
+          utvecklingen och spara stunderna du vill minnas.
+        </AppText>
+      </Animated.View>
 
-      {/* Content */}
-      <View style={styles.content}>
-        <Animated.View entering={FadeInDown.delay(280).duration(600)}>
-          <AppText variant="body" color={colors.text} style={styles.lead}>
-            Spara bilder, vikt, milstolpar och utmaningar, och skapa fina kort att
-            dela. Allt samlat till en lugn resa, inte utspritt i kamerarullen och
-            anteckningar.
-          </AppText>
-        </Animated.View>
-
-        <Animated.View entering={FadeInDown.delay(360).duration(600)} style={styles.steps}>
-          <AppText variant="overline" color={colors.accent} style={styles.stepsLabel}>
-            SÅ FUNKAR DET
-          </AppText>
-          {STEPS.map((s, i) => (
-            <View key={s.title} style={styles.step}>
-              <IconCircle name={s.icon} size={44} tone="forest" />
-              <View style={styles.stepText}>
-                <AppText variant="bodyStrong">
-                  {i + 1}. {s.title}
-                </AppText>
-                <AppText variant="caption" color={colors.textMuted}>
-                  {s.body}
-                </AppText>
+      {/* How it works */}
+      <View style={styles.steps}>
+        <AppText variant="overline" color={colors.moss}>
+          SÅ FUNKAR DET
+        </AppText>
+        {STEPS.map((s, i) => (
+          <Animated.View key={s.title} entering={FadeInDown.delay(260 + i * 80).duration(500)}>
+            <AppCard variant="primary" padding="md">
+              <View style={styles.step}>
+                <IconCircle name={s.icon} size={44} tone="forest" />
+                <View style={styles.stepText}>
+                  <AppText variant="bodyStrong">
+                    {i + 1}. {s.title}
+                  </AppText>
+                  <AppText variant="caption" color={colors.textMuted}>
+                    {s.body}
+                  </AppText>
+                </View>
               </View>
-            </View>
-          ))}
-        </Animated.View>
-
-        <Animated.View entering={FadeInDown.delay(440).duration(600)} style={styles.cta}>
-          <AppButton label="Skapa valpprofil" onPress={() => router.push('/onboarding')} />
-          <AppText variant="caption" color={colors.textMuted} align="center" style={styles.footnote}>
-            En lugn och personlig valpresa för dig och din valp.
-          </AppText>
-        </Animated.View>
+            </AppCard>
+          </Animated.View>
+        ))}
       </View>
-    </ScrollView>
+
+      {/* CTA */}
+      <Animated.View entering={FadeInDown.delay(540).duration(500)} style={styles.cta}>
+        <AppButton label="Skapa valpprofil" onPress={() => router.push('/onboarding')} />
+        <AppText
+          variant="caption"
+          color={colors.textMuted}
+          align="center"
+          style={styles.footnote}
+        >
+          Du kan börja utan konto.
+        </AppText>
+      </Animated.View>
+    </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: colors.background },
-  hero: {
-    backgroundColor: colors.primaryDeep,
-    paddingHorizontal: spacing.xl,
-    paddingBottom: spacing.xxl,
-    borderBottomLeftRadius: radius.xl,
-    borderBottomRightRadius: radius.xl,
-    alignItems: 'center',
-  },
-  brandRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-    alignSelf: 'flex-start',
-  },
-  brand: { marginTop: 2 },
-  heroArt: { marginTop: spacing.xl, alignItems: 'center', justifyContent: 'center' },
-  heroCircle: {
-    width: 180,
-    height: 180,
-    borderRadius: 90,
-    backgroundColor: '#1B4E36',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  heroText: { marginTop: spacing.xl, alignItems: 'center', gap: spacing.xs },
-  title: { textAlign: 'center' },
-  content: { paddingHorizontal: spacing.xl, paddingTop: spacing.xl },
-  lead: {},
-  steps: { marginTop: spacing.xl, gap: spacing.lg },
-  stepsLabel: {},
+  brandRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
+  heroTitle: { marginTop: spacing.sm, marginBottom: spacing.sm },
+  heroBody: { marginBottom: spacing.lg },
+  heroImage: {},
+  value: {},
+  steps: { gap: spacing.md },
   step: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
   stepText: { flexShrink: 1, gap: 2 },
-  cta: { marginTop: spacing.xxl },
+  cta: {},
   footnote: { marginTop: spacing.md },
 });

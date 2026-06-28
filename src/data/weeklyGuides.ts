@@ -22,7 +22,7 @@ export const weeklyGuides: WeeklyGuide[] = [
     focusPoints: ['Trygg start', 'Lugn dygnsrytm', 'Korta positiva stunder'],
     checklist: [
       'Skapa en lugn viloplats',
-      'Logga vikt',
+      'Spara vikt',
       'Lägg till första bilden',
       'Håll utevistelser korta',
       'Belöna lugnt beteende',
@@ -42,7 +42,7 @@ export const weeklyGuides: WeeklyGuide[] = [
     focusPoints: ['Fasta rutiner', 'Positiv koppling till hemmet', 'Vila efter aktivitet'],
     checklist: [
       'Håll fasta mat- och vilotider',
-      'Logga vikt',
+      'Spara vikt',
       'Lägg till veckans bild',
       'Öva korta avsked',
       'Belöna lugnt beteende',
@@ -62,7 +62,7 @@ export const weeklyGuides: WeeklyGuide[] = [
     focusPoints: ['Korta miljöpass', 'Positiva nya intryck', 'Gott om vila'],
     checklist: [
       'Ett nytt lugnt intryck i taget',
-      'Logga vikt',
+      'Spara vikt',
       'Lägg till veckans bild',
       'Erbjud något tillåtet att tugga på',
       'Belöna lugnt beteende',
@@ -82,7 +82,7 @@ export const weeklyGuides: WeeklyGuide[] = [
     focusPoints: ['Korta träningspass', 'Tydliga vilopauser', 'Lugn hantering'],
     checklist: [
       'Träna 2–3 minuter i taget',
-      'Logga vikt',
+      'Spara vikt',
       'Lägg till veckans bild',
       'Lägg in tydliga sovpauser',
       'Belöna lugnt beteende',
@@ -101,7 +101,7 @@ export const weeklyGuides: WeeklyGuide[] = [
       'Bitande, hoppande och små kaosstunder betyder inte att något är fel. Ofta handlar det om trötthet, överslag eller behov av tydligare rutiner.',
     focusPoints: ['Korta miljöpass', 'Fortsatt rumsrenhet', 'Lugn hantering och vila'],
     checklist: [
-      'Logga vikt',
+      'Spara vikt',
       'Lägg till veckans bild',
       'Träna 2–3 minuter ensamhet',
       'Klipp eller rör vid klor försiktigt',
@@ -122,7 +122,7 @@ export const weeklyGuides: WeeklyGuide[] = [
     focusPoints: ['Konsekventa rutiner', 'Lugn vid hantering', 'Positiv förstärkning'],
     checklist: [
       'Upprepa korta träningsmoment',
-      'Logga vikt',
+      'Spara vikt',
       'Lägg till veckans bild',
       'Öva lugn hantering av tassar och öron',
       'Belöna lugnt beteende',
@@ -142,7 +142,7 @@ export const weeklyGuides: WeeklyGuide[] = [
     focusPoints: ['Lugna nya miljöer', 'Positiva möten', 'Vila efteråt'],
     checklist: [
       'Ett nytt lugnt intryck i taget',
-      'Logga vikt',
+      'Spara vikt',
       'Lägg till veckans bild',
       'Låt valpen utforska i egen takt',
       'Belöna lugnt beteende',
@@ -162,7 +162,7 @@ export const weeklyGuides: WeeklyGuide[] = [
     focusPoints: ['Förutsägbar struktur', 'Korta aktiva pass', 'Planerad vila'],
     checklist: [
       'Planera in vila före överstimulering',
-      'Logga vikt',
+      'Spara vikt',
       'Lägg till veckans bild',
       'Träna korta, roliga moment',
       'Belöna lugnt beteende',
@@ -182,7 +182,7 @@ export const weeklyGuides: WeeklyGuide[] = [
     focusPoints: ['Fortsatt rumsrenhet', 'Lugn ensamträning', 'Konsekvens'],
     checklist: [
       'Bygg vidare på ensamträning',
-      'Logga vikt',
+      'Spara vikt',
       'Lägg till veckans bild',
       'Håll rutiner konsekventa',
       'Belöna lugnt beteende',

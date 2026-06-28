@@ -25,7 +25,7 @@ export default function PhotoStep() {
       stepIndex={4}
       totalSteps={TOTAL_STEPS}
       title="Lägg till en första bild"
-      subtitle="En bild gör profilen personlig direkt. Du kan byta den när som helst."
+      subtitle="En bild gör valpens profil personlig direkt. Du kan hoppa över och lägga till senare."
       onBack={() => router.back()}
       onNext={() => router.push('/onboarding/measurements')}
       secondary={{ label: 'Lägg till senare', onPress: () => router.push('/onboarding/measurements') }}
@@ -42,7 +42,7 @@ export default function PhotoStep() {
             </Animated.View>
           ) : (
             <View style={styles.empty}>
-              <Ionicons name="camera-outline" size={44} color={colors.textMuted} />
+              <Ionicons name="camera-outline" size={44} color={colors.moss} />
               <AppText variant="caption" color={colors.textMuted}>
                 Tryck för att lägga till
               </AppText>
@@ -50,7 +50,7 @@ export default function PhotoStep() {
           )}
         </Pressable>
         <AppText variant="caption" color={colors.textMuted} align="center" style={styles.hint}>
-          (Bilduppladdning kopplas in i ett senare steg.)
+          Bild kan läggas till senare.
         </AppText>
       </View>
     </OnboardingScaffold>
@@ -60,13 +60,10 @@ export default function PhotoStep() {
 const styles = StyleSheet.create({
   center: { alignItems: 'center', justifyContent: 'center', flex: 1 },
   circle: {
-    width: 180,
-    height: 180,
-    borderRadius: 90,
-    backgroundColor: colors.card,
-    borderWidth: 2,
-    borderColor: colors.border,
-    borderStyle: 'dashed',
+    width: 184,
+    height: 184,
+    borderRadius: 92,
+    backgroundColor: colors.surfaceSage,
     alignItems: 'center',
     justifyContent: 'center',
   },

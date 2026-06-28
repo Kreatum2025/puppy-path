@@ -18,7 +18,7 @@ export function HomeHeader({ name, puppyAgeWeeks, homeWeekLabel }: HomeHeaderPro
     <Animated.View entering={FadeInDown.duration(500)} style={styles.root}>
       <IconCircle name="paw-outline" size={56} tone="forest" />
       <View style={styles.text}>
-        <AppText variant="caption" color={colors.primary}>
+        <AppText variant="overline" color={colors.moss}>
           {homeWeekLabel}
         </AppText>
         <AppText variant="title">{name}</AppText>

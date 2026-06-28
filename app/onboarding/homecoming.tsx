@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { OnboardingScaffold } from '@/features/onboarding/OnboardingScaffold';
-import { AppText } from '@/components';
+import { AppCard, AppText } from '@/components';
 import { usePuppy } from '@/context/PuppyContext';
 import { subDays, toISODate, formatSwedishDate } from '@/lib/dates';
 import { colors, radius, spacing } from '@/theme';
@@ -34,13 +34,20 @@ export default function HomecomingStep() {
       stepIndex={3}
       totalSteps={TOTAL_STEPS}
       title="När kom valpen hem till dig?"
-      subtitle="Det är här er resa tillsammans börjar. Vi använder datumet för att anpassa valpens resa vecka för vecka."
+      subtitle="Det datumet blir början på er resa tillsammans."
       onBack={() => router.back()}
       onNext={() => {
         updateDraft({ homecomingDate });
         router.push('/onboarding/before-home');
       }}
     >
+      <AppCard variant="secondary" padding="md" style={styles.story}>
+        <AppText variant="body" color={colors.text}>
+          Första tiden hemma handlar mest om trygghet, vila och att lära känna
+          varandra.
+        </AppText>
+      </AppCard>
+
       <View style={styles.list}>
         {OPTIONS.map((o) => {
           const active = o.days === days;
@@ -68,6 +75,7 @@ export default function HomecomingStep() {
 }
 
 const styles = StyleSheet.create({
+  story: { marginBottom: spacing.xl },
   list: { gap: spacing.sm },
   chip: {
     alignItems: 'flex-start',

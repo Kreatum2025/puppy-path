@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import {
+  Platform,
   ScrollView,
   StyleSheet,
   View,
@@ -19,12 +20,15 @@ interface ScreenContainerProps {
   contentStyle?: ViewStyle;
   /** Background color token (defaults to cream background). */
   background?: string;
+  /** Max content width on web so the mobile-first layout stays centered. */
+  maxContentWidth?: number;
   contentContainerStyle?: ScrollViewProps['contentContainerStyle'];
 }
 
 /**
  * Standard cream screen surface with consistent horizontal padding and
- * safe-area handling. Used by every screen so spacing stays calm and uniform.
+ * safe-area handling. On web the content is capped and centered so the
+ * mobile-first layout never stretches across a wide desktop window.
  */
 export function ScreenContainer({
   children,
@@ -32,10 +36,16 @@ export function ScreenContainer({
   withTopInset = true,
   contentStyle,
   background = colors.background,
+  maxContentWidth = 760,
   contentContainerStyle,
 }: ScreenContainerProps) {
   const insets = useSafeAreaInsets();
   const padTop = withTopInset ? insets.top + spacing.sm : spacing.lg;
+
+  const webCenter: ViewStyle | null =
+    Platform.OS === 'web'
+      ? { width: '100%', maxWidth: maxContentWidth, alignSelf: 'center' }
+      : null;
 
   if (scroll) {
     return (
@@ -44,6 +54,7 @@ export function ScreenContainer({
         contentContainerStyle={[
           styles.content,
           { paddingTop: padTop, paddingBottom: insets.bottom + spacing.xxxl },
+          webCenter,
           contentContainerStyle,
         ]}
         showsVerticalScrollIndicator={false}
@@ -59,6 +70,7 @@ export function ScreenContainer({
         styles.flex,
         styles.content,
         { backgroundColor: background, paddingTop: padTop },
+        webCenter,
         contentStyle,
       ]}
     >

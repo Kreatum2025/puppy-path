@@ -16,7 +16,7 @@ export function NativeOfferCard({ offer }: NativeOfferCardProps) {
     <View style={styles.card}>
       <IconCircle name={offer.icon} size={48} />
       <View style={styles.text}>
-        <AppText variant="overline" color={colors.accent}>
+        <AppText variant="overline" color={colors.moss}>
           {offer.category.toUpperCase()}
         </AppText>
         <AppText variant="bodyStrong" style={styles.title}>
@@ -56,5 +56,12 @@ const styles = StyleSheet.create({
   icon: { fontSize: 22 },
   text: { flexShrink: 1, flex: 1, gap: 2 },
   title: { marginTop: 2 },
-  tag: { marginTop: spacing.sm },
+  tag: {
+    marginTop: spacing.sm,
+    alignSelf: 'flex-start',
+    backgroundColor: colors.sand,
+    borderRadius: radius.pill,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 2,
+  },
 });

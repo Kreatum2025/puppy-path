@@ -1,9 +1,13 @@
 import type { ReactNode } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Platform, Pressable, StyleSheet, View, type ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { AppButton, AppText } from '@/components';
 import { colors, radius, spacing } from '@/theme';
+
+// Keep the mobile-first layout centered and capped on web.
+const webCenter: ViewStyle | null =
+  Platform.OS === 'web' ? { width: '100%', maxWidth: 560, alignSelf: 'center' } : null;
 
 interface OnboardingScaffoldProps {
   /** 0-based index of this step. */
@@ -36,7 +40,7 @@ export function OnboardingScaffold({
   const insets = useSafeAreaInsets();
 
   return (
-    <View style={[styles.root, { paddingTop: insets.top + spacing.md }]}>
+    <View style={[styles.root, webCenter, { paddingTop: insets.top + spacing.md }]}>
       <View style={styles.header}>
         {onBack ? (
           <Pressable

@@ -52,7 +52,8 @@ export default function TodayScreen() {
         <ContentCard
           title={content.weekly.title}
           body={content.weekly.body}
-          emphasis
+          overline="DEN HÄR VECKAN"
+          tone="feature"
           delay={60}
         />
 
@@ -70,10 +71,18 @@ export default function TodayScreen() {
         <ContentCard
           title={content.reassurance.title}
           body={content.reassurance.body}
+          overline="TRYGGHET"
+          tone="sage"
           delay={180}
         />
 
-        <ContentCard title={breedNote.title} body={breedNote.body} delay={240} />
+        <ContentCard
+          title={breedNote.title}
+          body={breedNote.body}
+          overline="RASNOTIS"
+          tone="sage"
+          delay={240}
+        />
       </ScreenContainer>
 
       <Toast message={toast} onHide={() => setToast(null)} />

@@ -1,7 +1,11 @@
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Platform, StyleSheet, type ColorValue } from 'react-native';
+import { Platform, StyleSheet, type ColorValue, type ViewStyle } from 'react-native';
 import { colors, fonts } from '@/theme';
+
+// Remove the browser focus outline on tabs in the Expo web demo (no native effect).
+const webNoOutline =
+  Platform.OS === 'web' ? ({ outlineStyle: 'none' } as unknown as ViewStyle) : null;
 
 type IoniconName = keyof typeof Ionicons.glyphMap;
 
@@ -20,7 +24,7 @@ export default function TabsLayout() {
         tabBarInactiveTintColor: colors.textMuted,
         tabBarStyle: styles.tabBar,
         tabBarLabelStyle: styles.label,
-        tabBarItemStyle: styles.item,
+        tabBarItemStyle: [styles.item, webNoOutline],
       }}
     >
       <Tabs.Screen

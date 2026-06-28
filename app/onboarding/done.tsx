@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, View, type ViewStyle } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, {
@@ -15,6 +15,9 @@ import { AppButton, AppText, PathMark } from '@/components';
 import { usePuppy } from '@/context/PuppyContext';
 import { homeWeekLabel } from '@/lib/week';
 import { colors, spacing } from '@/theme';
+
+const webCenter: ViewStyle | null =
+  Platform.OS === 'web' ? { width: '100%', maxWidth: 560, alignSelf: 'center' } : null;
 
 /** Reward screen — a calm, warm payoff after onboarding. */
 export default function OnboardingDone() {
@@ -40,12 +43,15 @@ export default function OnboardingDone() {
     <View
       style={[
         styles.root,
+        webCenter,
         { paddingTop: insets.top + spacing.xxxl, paddingBottom: insets.bottom + spacing.xl },
       ]}
     >
       <View style={styles.center}>
-        <Animated.View style={[styles.badge, badgeStyle]}>
-          <PathMark size={88} color={colors.card} accent={colors.accent} />
+        <Animated.View style={[styles.halo, badgeStyle]}>
+          <View style={styles.badge}>
+            <PathMark size={80} color={colors.card} accent={colors.accent} />
+          </View>
         </Animated.View>
 
         <Animated.View entering={FadeInDown.delay(250).duration(600)} style={styles.text}>
@@ -56,8 +62,7 @@ export default function OnboardingDone() {
             {homeLabel} · {name} är {puppyAgeWeeks} veckor
           </AppText>
           <AppText variant="body" color={colors.textMuted} align="center">
-            Nu börjar er resa hemma tillsammans. Ni tar det lugnt, en vecka i
-            taget.
+            Nu tar ni första stegen hemma tillsammans, en vecka i taget.
           </AppText>
         </Animated.View>
       </View>
@@ -75,6 +80,14 @@ export default function OnboardingDone() {
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.background, paddingHorizontal: spacing.xl },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: spacing.xxl },
+  halo: {
+    width: 196,
+    height: 196,
+    borderRadius: 98,
+    backgroundColor: colors.surfaceSage,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   badge: {
     width: 160,
     height: 160,

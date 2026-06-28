@@ -1,14 +1,16 @@
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { Platform, Pressable, ScrollView, StyleSheet, View, type ViewStyle } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-import { AppButton, AppCard, AppText, IconCircle } from '@/components';
-import { colors, spacing } from '@/theme';
+import { AppButton, AppCard, AppText, StoryImageSlot } from '@/components';
+import { colors, radius, spacing } from '@/theme';
+
+const webCenter: ViewStyle | null =
+  Platform.OS === 'web' ? { width: '100%', maxWidth: 560, alignSelf: 'center' } : null;
 
 /**
- * onboarding_info-kort: bryggan mellan "tiden hos mamma/kull" och "livet hemma
- * hos dig". Visas efter ålders- och hemkomststeget. Hjälper användaren att inte
- * blanda ihop biologisk vecka 8-12 med "första veckan hemma".
+ * A story moment that bridges the puppy's first weeks with the litter and the
+ * start of life at home. Sets a warm, narrative tone (not just a text card).
  */
 export default function BeforeHome() {
   const router = useRouter();
@@ -18,24 +20,43 @@ export default function BeforeHome() {
     <View
       style={[
         styles.root,
+        webCenter,
         { paddingTop: insets.top + spacing.xl, paddingBottom: insets.bottom + spacing.lg },
       ]}
     >
+      <Pressable
+        onPress={() => router.back()}
+        hitSlop={12}
+        accessibilityRole="button"
+        accessibilityLabel="Tillbaka"
+        style={styles.back}
+      >
+        <AppText variant="body" color={colors.textMuted}>
+          ‹ Tillbaka
+        </AppText>
+      </Pressable>
+
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
-        <Animated.View entering={FadeInDown.duration(500)}>
-          <IconCircle name="heart-outline" size={56} tone="forest" />
-          <AppText variant="title" style={styles.title}>
-            Innan valpen kom hem till dig
-          </AppText>
-          <AppCard padding="md">
+        <Animated.View entering={FadeInDown.duration(500)} style={styles.inner}>
+          {/* Future image: puppy with its mother and littermates */}
+          <StoryImageSlot aspectRatio={4 / 3} tone="sand" />
+
+          <View>
+            <AppText variant="overline" color={colors.moss} style={styles.overline}>
+              INNAN ER RESA BÖRJAR
+            </AppText>
+            <AppText variant="title">Innan valpen kom hem till dig</AppText>
+          </View>
+
+          <AppCard variant="secondary" padding="md">
             <AppText variant="body" style={styles.p}>
               Din valp har redan varit med om sin första viktiga resa. De första
-              veckorna har den fått vara nära sin mamma och sina kullsyskon. Där har
+              veckorna har den varit nära sin mamma och sina kullsyskon. Där har
               valpen fått näring, värme och trygghet, men också börjat lära sig
-              hundspråk, lek, gränser och hur man är tillsammans med andra.
+              hundspråk, lek och gränser.
             </AppText>
             <AppText variant="body" style={styles.p}>
-              Nu börjar nästa stora steg: livet hemma hos dig.
+              Nu börjar nästa steg: livet hemma hos dig.
             </AppText>
             <AppText variant="body">
               Den första tiden handlar inte om att göra allt perfekt. Det
@@ -43,6 +64,19 @@ export default function BeforeHome() {
               varandra i lugn takt.
             </AppText>
           </AppCard>
+
+          <View style={styles.chips}>
+            <View style={styles.chip}>
+              <AppText variant="caption" color={colors.text}>
+                Första veckorna: mamma, kull och trygghet
+              </AppText>
+            </View>
+            <View style={styles.chip}>
+              <AppText variant="caption" color={colors.text}>
+                Nu: hemmet, vila och relation
+              </AppText>
+            </View>
+          </View>
         </Animated.View>
       </ScrollView>
 
@@ -53,7 +87,16 @@ export default function BeforeHome() {
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.background, paddingHorizontal: spacing.xl },
+  back: { paddingTop: spacing.sm, paddingBottom: spacing.md },
   scroll: { paddingBottom: spacing.lg },
-  title: { marginTop: spacing.lg, marginBottom: spacing.lg },
+  inner: { gap: spacing.lg },
+  overline: { marginBottom: spacing.xs },
   p: { marginBottom: spacing.md },
+  chips: { gap: spacing.sm },
+  chip: {
+    backgroundColor: colors.surfaceSage,
+    borderRadius: radius.md,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+  },
 });

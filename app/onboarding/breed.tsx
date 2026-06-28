@@ -36,7 +36,7 @@ export default function BreedStep() {
       stepIndex={1}
       totalSteps={TOTAL_STEPS}
       title="Vilken ras?"
-      subtitle="Sök eller välj i listan. Hittar du inte rasen, välj Blandras."
+      subtitle="Sök eller välj i listan. Är du osäker kan du välja Blandras."
       nextDisabled={!selected}
       onBack={() => router.back()}
       onNext={() => {
@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.lg,
   },
-  rowActive: { borderColor: colors.primary, backgroundColor: '#F3F7F0' },
+  rowActive: { borderColor: colors.primary, backgroundColor: colors.surfaceSage },
   check: {
     width: 24,
     height: 24,

@@ -17,8 +17,8 @@ export const weeklyDevelopmentWeek1: HomeCard = {
 };
 
 export const dailyGoalWeek1: HomeCard = {
-  title: 'Dagens lilla mål',
-  body: 'Sätt dig en stund på golvet nära valpen utan krav. Låt den komma till dig i sin egen takt.',
+  title: 'Sätt dig en stund på golvet nära valpen, utan krav.',
+  body: 'Låt den komma till dig i sin egen takt.',
   cta: 'Markera som gjort',
 };
 
@@ -29,7 +29,7 @@ export const reassuranceWeek1: HomeCard = {
 
 const GENERIC_BREED_NOTE: HomeCard = {
   title: 'Din rasnotis',
-  body: 'Varje ras har sina små särdrag. De första veckorna handlar mest om trygghet och vila, så det rasspecifika kommer vi till efter hand.',
+  body: 'Blandraser och unga valpar utvecklas olika. Vi använder ålder, vikt och dina sparade minnen för att göra resan mer personlig över tid.',
 };
 
 const BREED_NOTES: Partial<Record<BreedId, HomeCard>> = {
@@ -68,8 +68,8 @@ const laterWeeksContent: HomeContent = {
     body: 'Vi bygger vidare på fler hemkomstveckor. I demon fokuserar vi först på den första tiden hemma.',
   },
   dailyGoal: {
-    title: 'Dagens lilla mål',
-    body: 'Ta en lugn stund tillsammans idag, helt utan krav.',
+    title: 'Ta en lugn stund tillsammans idag, helt utan krav.',
+    body: 'Bara närvaro, inget att prestera.',
     cta: 'Markera som gjort',
   },
   reassurance: {

@@ -95,7 +95,7 @@ export function GrowthChartCard({ history, dateOfBirth }: GrowthChartCardProps) 
     <AppCard padding="md">
       {/* Header: title + metric toggle */}
       <View style={styles.header}>
-        <AppText variant="overline" color={colors.accent}>
+        <AppText variant="overline" color={colors.moss}>
           TILLVÄXT
         </AppText>
         <View style={styles.toggle}>
@@ -122,7 +122,9 @@ export function GrowthChartCard({ history, dateOfBirth }: GrowthChartCardProps) 
       {/* Latest value + delta */}
       <View style={styles.valueRow}>
         <AppText variant="stat" color={colors.primary}>
-          {latestReal ? cfg.format(latestReal.value) : `Ej loggad ${cfg.unit}`}
+          {latestReal
+            ? cfg.format(latestReal.value)
+            : `Ingen ${cfg.label.toLowerCase()} sparad ännu`}
         </AppText>
         {delta != null ? (
           <View style={[styles.deltaPill, delta < 0 && styles.deltaPillDown]}>
@@ -166,7 +168,7 @@ export function GrowthChartCard({ history, dateOfBirth }: GrowthChartCardProps) 
             </AppText>
           </View>
           <AppText variant="caption" color={colors.textMuted} style={styles.exampleText}>
-            Din kurva ritas när du loggar {cfg.label.toLowerCase()} över flera veckor.
+            Din kurva växer fram när du sparar {cfg.label.toLowerCase()} över flera veckor.
           </AppText>
         </View>
       ) : null}

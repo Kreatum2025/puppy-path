@@ -18,7 +18,7 @@ export default function JourneyScreen() {
       <AppHeader
         overline="Första året"
         title="Resan, vecka för vecka"
-        subtitle="Följ utvecklingen från 8 till 52 veckor. Tryck på en vecka för att läsa mer."
+        subtitle="Följ utvecklingen från första tiden hemma till ettårsdagen."
       />
 
       {guides.map((g, i) => (

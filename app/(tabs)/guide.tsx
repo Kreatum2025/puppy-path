@@ -35,12 +35,7 @@ export default function GuideScreen() {
               style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
             >
               <View style={styles.cardTop}>
-                <IconCircle name={c.icon} size={44} />
-                <View style={styles.soon}>
-                  <AppText variant="overline" color={colors.textMuted}>
-                    SNART
-                  </AppText>
-                </View>
+                <IconCircle name={c.icon} size={44} tone="forest" />
               </View>
               <AppText variant="bodyStrong" style={styles.title}>
                 {c.title}
@@ -73,10 +68,10 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
     gap: spacing.sm,
   },
-  cardPressed: { backgroundColor: '#F3EFE4' },
+  cardPressed: { backgroundColor: colors.surfaceSage },
   cardTop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   soon: {
-    backgroundColor: colors.background,
+    backgroundColor: colors.sand,
     borderRadius: radius.pill,
     paddingHorizontal: spacing.sm,
     paddingVertical: 2,

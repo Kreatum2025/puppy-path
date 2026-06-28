@@ -21,10 +21,9 @@ export default function OffersScreen() {
         subtitle="Lugna, relevanta tips baserade på var i resan ni är. Inga högljudda annonser."
       />
 
-      <AppCard padding="md" background={colors.background} bordered>
+      <AppCard variant="secondary" padding="md">
         <AppText variant="caption" color={colors.textMuted}>
-          Det här är exempel på framtida partnerplatser. Inga riktiga länkar är
-          aktiva ännu, och vi visar bara sådant som passar din valps vecka.
+          Det här är exempel på framtida partnerplatser. Inga länkar är aktiva ännu.
         </AppText>
       </AppCard>
 

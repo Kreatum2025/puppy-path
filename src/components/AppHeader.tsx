@@ -17,7 +17,7 @@ export function AppHeader({ title, subtitle, overline, trailing }: AppHeaderProp
     <View style={styles.wrap}>
       <View style={styles.text}>
         {overline ? (
-          <AppText variant="overline" color={colors.accent} style={styles.overline}>
+          <AppText variant="overline" color={colors.moss} style={styles.overline}>
             {overline.toUpperCase()}
           </AppText>
         ) : null}

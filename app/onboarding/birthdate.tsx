@@ -34,7 +34,7 @@ export default function BirthdateStep() {
       stepIndex={2}
       totalSteps={TOTAL_STEPS}
       title="Hur gammal är din valp?"
-      subtitle="Ungefärlig ålder räcker. Vi räknar ut veckan åt dig."
+      subtitle="Ungefärlig ålder räcker. Vi använder den för att visa rätt utvecklingsfas."
       onBack={() => router.back()}
       onNext={() => {
         updateDraft({ dateOfBirth: dob });

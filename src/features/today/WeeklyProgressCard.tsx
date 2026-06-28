@@ -14,8 +14,8 @@ interface WeeklyProgressCardProps {
 }
 
 const ITEMS: { key: keyof WeeklyProgress; label: string }[] = [
-  { key: 'weightLogged', label: 'Vikt loggad' },
-  { key: 'heightLogged', label: 'Mankhöjd loggad' },
+  { key: 'weightLogged', label: 'Vikt sparad' },
+  { key: 'heightLogged', label: 'Mankhöjd sparad' },
   { key: 'photoSaved', label: 'Veckans bild sparad' },
   { key: 'milestoneSelected', label: 'Milstolpe vald' },
   { key: 'challengeSelected', label: 'Veckans utmaning vald' },
