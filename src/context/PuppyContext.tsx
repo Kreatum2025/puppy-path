@@ -4,6 +4,7 @@ import React, {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 import type { BreedId, Challenge, GrowthLog, Memory, Milestone, Puppy } from '@/types';
@@ -12,6 +13,7 @@ import { getGrowthHistory } from '@/services/growthService';
 import { breedNameById } from '@/services/breedService';
 import { ageInWeeks, currentWeek, homeWeekIndex, homeWeekLabel } from '@/lib/week';
 import { toISODate } from '@/lib/dates';
+import { loadPersistedState, savePersistedState } from '@/lib/persistence';
 
 /** Simple monotonic id generator for locally created records (prototype). */
 let localIdSeq = 0;
@@ -129,23 +131,87 @@ export function PuppyProvider({ children }: { children: React.ReactNode }) {
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [memories, setMemories] = useState<Memory[]>([]);
 
-  // Seed from the service layer (mock now, Supabase later).
+  // Tracks whether the initial hydrate/seed has completed. We must not persist
+  // before the first load resolves, or an empty default snapshot would clobber
+  // real stored data on every launch.
+  const hydratedRef = useRef(false);
+
+  // Hydrate from on-device storage first; only fall back to the service-layer
+  // seed (mock now, Supabase later) when there is no saved snapshot. This is
+  // what makes a testing user's puppy, memories and logs survive a restart.
   useEffect(() => {
     let active = true;
     (async () => {
-      const [p, hist] = await Promise.all([
-        getCurrentPuppy(),
-        getGrowthHistory(),
-      ]);
+      const persisted = await loadPersistedState();
       if (!active) return;
-      setPuppy(p);
-      setGrowthHistory(hist);
+
+      if (persisted) {
+        setPuppy(persisted.puppy);
+        setGrowthHistory(persisted.growthHistory);
+        setMilestones(persisted.milestones);
+        setChallenges(persisted.challenges);
+        setMemories(persisted.memories);
+
+        // The weekly gamified module (progress + the two selections) belongs to
+        // one homecoming week. If the stored snapshot is from an earlier week,
+        // roll it over (reset) instead of showing last week's completion — this
+        // restores the implicit weekly reset that in-memory state gave for free.
+        // History (milestones/challenges/memories) is kept regardless.
+        const currentHomeWeek = homeWeekIndex(persisted.puppy?.homecomingDate);
+        const staleWeek = persisted.savedForHomeWeek !== currentHomeWeek;
+        setWeeklyProgress(staleWeek ? emptyProgress : persisted.weeklyProgress);
+        setSelectedMilestone(staleWeek ? null : persisted.selectedMilestone);
+        setSelectedChallenge(staleWeek ? null : persisted.selectedChallenge);
+
+        // Resume the local id counter past anything already stored so newly
+        // created records can't reuse an id already on disk (e.g. mem-local-1).
+        localIdSeq = persisted.idSeq;
+      } else {
+        const [p, hist] = await Promise.all([
+          getCurrentPuppy(),
+          getGrowthHistory(),
+        ]);
+        if (!active) return;
+        setPuppy(p);
+        setGrowthHistory(hist);
+      }
+
+      hydratedRef.current = true;
       setLoading(false);
     })();
     return () => {
       active = false;
     };
   }, []);
+
+  // Persist a snapshot whenever any stored slice changes, but only after the
+  // initial load has resolved. Fire-and-forget and best-effort: a failed write
+  // simply degrades to in-memory-only, exactly as before persistence existed.
+  useEffect(() => {
+    if (!hydratedRef.current) return;
+    void savePersistedState({
+      puppy,
+      growthHistory,
+      weeklyProgress,
+      // Stamp the week this progress belongs to so hydration can roll it over.
+      savedForHomeWeek: homeWeekIndex(puppy?.homecomingDate),
+      selectedMilestone,
+      selectedChallenge,
+      milestones,
+      challenges,
+      memories,
+      idSeq: localIdSeq,
+    });
+  }, [
+    puppy,
+    growthHistory,
+    weeklyProgress,
+    selectedMilestone,
+    selectedChallenge,
+    milestones,
+    challenges,
+    memories,
+  ]);
 
   const week = useMemo(
     () => (puppy ? currentWeek(puppy.dateOfBirth) : 0),
@@ -239,16 +305,16 @@ export function PuppyProvider({ children }: { children: React.ReactNode }) {
 
   const logWeight = useCallback(
     (weightKg: number) => {
-      setGrowthHistory((prev) => [
-        ...prev,
-        {
-          id: nextLocalId('growth'),
-          puppyId: puppy?.id ?? 'puppy-local',
-          measuredAt: toISODate(new Date()),
-          weightKg,
-          withersHeightCm: null,
-        },
-      ]);
+      // Build the record OUTSIDE the updater so the id/timestamp are generated
+      // exactly once (updaters are re-invoked under React StrictMode).
+      const entry: GrowthLog = {
+        id: nextLocalId('growth'),
+        puppyId: puppy?.id ?? 'puppy-local',
+        measuredAt: toISODate(new Date()),
+        weightKg,
+        withersHeightCm: null,
+      };
+      setGrowthHistory((prev) => [...prev, entry]);
       setWeeklyProgress((p) => ({ ...p, weightLogged: true }));
     },
     [puppy],
@@ -256,16 +322,14 @@ export function PuppyProvider({ children }: { children: React.ReactNode }) {
 
   const logHeight = useCallback(
     (withersHeightCm: number) => {
-      setGrowthHistory((prev) => [
-        ...prev,
-        {
-          id: nextLocalId('growth'),
-          puppyId: puppy?.id ?? 'puppy-local',
-          measuredAt: toISODate(new Date()),
-          weightKg: null,
-          withersHeightCm,
-        },
-      ]);
+      const entry: GrowthLog = {
+        id: nextLocalId('growth'),
+        puppyId: puppy?.id ?? 'puppy-local',
+        measuredAt: toISODate(new Date()),
+        weightKg: null,
+        withersHeightCm,
+      };
+      setGrowthHistory((prev) => [...prev, entry]);
       setWeeklyProgress((p) => ({ ...p, heightLogged: true }));
     },
     [puppy],
@@ -278,17 +342,15 @@ export function PuppyProvider({ children }: { children: React.ReactNode }) {
 
   const selectMilestone = useCallback(
     (title: string) => {
+      const entry: Milestone = {
+        id: nextLocalId('ms'),
+        puppyId: puppy?.id ?? 'puppy-local',
+        title,
+        weekNumber: week,
+        achievedAt: toISODate(new Date()),
+      };
       setSelectedMilestone(title);
-      setMilestones((prev) => [
-        {
-          id: nextLocalId('ms'),
-          puppyId: puppy?.id ?? 'puppy-local',
-          title,
-          weekNumber: week,
-          achievedAt: toISODate(new Date()),
-        },
-        ...prev,
-      ]);
+      setMilestones((prev) => [entry, ...prev]);
       setWeeklyProgress((p) => ({ ...p, milestoneSelected: true }));
     },
     [puppy, week],
@@ -296,17 +358,15 @@ export function PuppyProvider({ children }: { children: React.ReactNode }) {
 
   const selectChallenge = useCallback(
     (title: string) => {
+      const entry: Challenge = {
+        id: nextLocalId('ch'),
+        puppyId: puppy?.id ?? 'puppy-local',
+        title,
+        weekNumber: week,
+        loggedAt: toISODate(new Date()),
+      };
       setSelectedChallenge(title);
-      setChallenges((prev) => [
-        {
-          id: nextLocalId('ch'),
-          puppyId: puppy?.id ?? 'puppy-local',
-          title,
-          weekNumber: week,
-          loggedAt: toISODate(new Date()),
-        },
-        ...prev,
-      ]);
+      setChallenges((prev) => [entry, ...prev]);
       setWeeklyProgress((p) => ({ ...p, challengeSelected: true }));
     },
     [puppy, week],
@@ -316,19 +376,17 @@ export function PuppyProvider({ children }: { children: React.ReactNode }) {
     (text: string, linkedTo: Memory['linkedTo'] = 'daily_goal') => {
       const trimmed = text.trim();
       if (!trimmed) return;
-      setMemories((prev) => [
-        {
-          id: nextLocalId('mem'),
-          puppyId: puppy?.id ?? 'puppy-local',
-          text: trimmed,
-          linkedTo,
-          homeWeekLabel: homeWeekLabel(homeWeek),
-          puppyAgeWeeks,
-          photoUri: null,
-          createdAt: toISODate(new Date()),
-        },
-        ...prev,
-      ]);
+      const entry: Memory = {
+        id: nextLocalId('mem'),
+        puppyId: puppy?.id ?? 'puppy-local',
+        text: trimmed,
+        linkedTo,
+        homeWeekLabel: homeWeekLabel(homeWeek),
+        puppyAgeWeeks,
+        photoUri: null,
+        createdAt: toISODate(new Date()),
+      };
+      setMemories((prev) => [entry, ...prev]);
     },
     [puppy, homeWeek, puppyAgeWeeks],
   );
